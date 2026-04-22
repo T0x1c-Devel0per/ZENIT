@@ -1,0 +1,309 @@
+@import './tokens.css';
+
+/**
+ * Estilos Globales - Reset y Base
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Light theme (default) */
+html.light body {
+  color: var(--color-gray-900);
+  background-color: transparent;
+}
+
+/* Dark theme */
+html.dark body {
+  color: var(--color-gray-100);
+  background-color: transparent;
+}
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  overflow-x: hidden;
+}
+
+/* ===== ENLACES ===== */
+html.light a {
+  color: var(--color-primary-600);
+}
+
+html.dark a {
+  color: var(--color-primary-300);
+}
+
+a {
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+html.light a:hover {
+  color: var(--color-primary-700);
+}
+
+html.dark a:hover {
+  color: var(--color-primary-200);
+}
+
+/* ===== IMÁGENES ===== */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ===== BOTONES ===== */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ===== INPUTS ===== */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* ===== LISTAS ===== */
+ul,
+ol {
+  list-style: none;
+}
+
+/* ===== ENCABEZADOS ===== */
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6 {
+  color: var(--color-gray-900);
+}
+
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: var(--color-gray-100);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+h1 {
+  font-size: var(--font-size-5xl);
+}
+
+h2 {
+  font-size: var(--font-size-4xl);
+}
+
+h3 {
+  font-size: var(--font-size-3xl);
+}
+
+h4 {
+  font-size: var(--font-size-2xl);
+}
+
+h5 {
+  font-size: var(--font-size-xl);
+}
+
+h6 {
+  font-size: var(--font-size-lg);
+}
+
+/* ===== UTILIDADES ===== */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-4);
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-8);
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-normal) ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--transition-slow) ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--transition-normal) ease-out;
+}
+
+/* ===== GLASSMORPHISM ===== */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: var(--shadow-lg);
+}
+
+html.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-200);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-400);
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-gray-700);
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-700);
+}
+
+/* ===== CLASES DE UTILIDAD ===== */
+.text-center {
+  text-align: center;
+}
+
+html.light .text-primary {
+  color: var(--color-primary-600);
+}
+
+html.dark .text-primary {
+  color: var(--color-primary-300);
+}
+
+html.light .text-secondary {
+  color: var(--color-secondary-600);
+}
+
+html.dark .text-secondary {
+  color: var(--color-secondary-300);
+}
+
+html.light .bg-primary {
+  background-color: var(--color-primary-500);
+}
+
+html.dark .bg-primary {
+  background-color: var(--color-primary-700);
+}
+
+html.light .bg-secondary {
+  background-color: var(--color-secondary-500);
+}
+
+html.dark .bg-secondary {
+  background-color: var(--color-secondary-700);
+}
+
+/* ===== DARK MODE STYLES ===== */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark ::selection {
+  background-color: var(--color-primary-800);
+  color: var(--color-white);
+}
+
+html.light ::selection {
+  background-color: var(--color-primary-200);
+  color: var(--color-gray-900);
+}
