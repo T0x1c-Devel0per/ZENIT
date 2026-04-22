@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import contactRoutes from './routes/contactRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import whatsappRoutes from './routes/whatsappRoutes.js';
 import connectDB from './config/db.js';
 
 const app = express();
@@ -30,6 +31,7 @@ app.get('/api/health', (_req: Request, res: Response) => {
 app.use('/api/contact', contactRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/whatsapp', whatsappRoutes);
 
 // Error handling middleware
 app.use((err: Error, _req: Request, res: Response, _next: express.NextFunction) => {

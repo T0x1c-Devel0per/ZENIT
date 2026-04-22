@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run server:build && tsc -b && vite build",
+    "start": "npm run server",
     "lint": "eslint .",
     "preview": "vite preview",
     "server:dev": "npx tsx watch server/index.ts",
