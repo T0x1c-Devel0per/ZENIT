@@ -24,7 +24,7 @@ class TTSService {
         body: JSON.stringify({
           model: 'tts-1',
           input: text,
-          voice: 'nova', // 'alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'
+          voice: 'alloy', // 'alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'
           response_format: 'mp3'
         })
       });
