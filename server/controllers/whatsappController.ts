@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import WhatsAppService from '../services/whatsappService.js';
+import AIService from '../services/aiService.js';
 
 /**
  * Controller for WhatsApp Webhooks and Sending
@@ -53,8 +54,11 @@ class WhatsAppController {
             const text = message.text.body;
             console.log(`[WhatsApp] Content: "${text}"`);
 
-            // Example: Auto-reply or logic for Bot
-            // await WhatsAppService.sendMessage(from, `Hola! Recibimos tu mensaje: "${text}". Un asesor te contactará pronto.`);
+            // 🤖 AI Logic: Generate response using Gemini
+            const aiResponse = await AIService.generateResponse(text);
+            
+            // 📩 Send response back via WhatsApp
+            await WhatsAppService.sendMessage(from, aiResponse);
             
             // Mark as read
             await WhatsAppService.markAsRead(messageId);
