@@ -43,13 +43,19 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'SteamClean - Limpieza al Vapor',
+        name: 'SteamClean - Limpieza al Vapor Profesional',
         short_name: 'SteamClean',
-        description: 'Servicios profesionales de limpieza al vapor',
-        theme_color: '#ffffff',
+        description: 'Servicio profesional de limpieza al vapor residencial y comercial.',
+        theme_color: '#0EA5E9',
+        icons: [
+          {
+            src: 'favicon.svg',
+            sizes: '192x192',
+            type: 'image/svg+xml'
+          }
+        ],
         background_color: '#ffffff',
         display: 'standalone',
-        icon: 'public/favicon.svg',
         start_url: '/',
       }
     })

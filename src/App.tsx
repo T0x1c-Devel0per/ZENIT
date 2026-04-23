@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Layout } from './components/Layout/index.js';
 import { Loading } from './components/Loading/index.js';

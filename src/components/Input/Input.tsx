@@ -24,7 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             id={inputId}
-            className={cn('input', error && 'input--error', icon && 'input--with-icon')}
+            className={cn('input', !!error && 'input--error', !!icon && 'input--with-icon')}
             {...props}
           />
         </div>

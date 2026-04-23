@@ -40,7 +40,7 @@ class WhatsAppService {
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as any;
 
       if (!response.ok) {
         throw new Error(data.error?.message || 'Error sending WhatsApp message');
@@ -86,7 +86,7 @@ class WhatsAppService {
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as any;
 
       if (!response.ok) {
         throw new Error(data.error?.message || 'Error sending WhatsApp template');

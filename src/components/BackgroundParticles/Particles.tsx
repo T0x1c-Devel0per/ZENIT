@@ -49,12 +49,6 @@ export const PolyParticles = ({ count = 120, connectionDistance = 2.5 }) => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const uniforms = useMemo(() => ({
-    uTime: { value: 0 },
-    uMouse: { value: new THREE.Vector2(0, 0) },
-    uRadius: { value: 5.0 },
-    uColor: { value: new THREE.Color('#0ea5e9') } // Initial color
-  }), []);
 
   useFrame((state) => {
     const { clock, viewport } = state;

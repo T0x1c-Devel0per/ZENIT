@@ -8,7 +8,7 @@ import { galleryItems } from '../../models/data.js';
 import './Gallery.css';
 
 export function Gallery() {
-  const { setRef, isInView } = useInView<HTMLDivElement>(0.1);
+  const { setRef } = useInView<HTMLDivElement>(0.1);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const toggleCompare = (id: string) => {

@@ -36,7 +36,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Icon name={social.icon} size="md" />
+                  <Icon name={social.icon as any} size="md" />
                 </a>
               ))}
             </div>
@@ -49,7 +49,7 @@ export function Footer() {
               {contactItems.map((item) => (
                 <li key={item.label}>
                   <a href={item.href} className="footer__link">
-                    <Icon name={item.icon} size="sm" />
+                    <Icon name={item.icon as any} size="sm" />
                     {item.label}
                   </a>
                 </li>

@@ -7,7 +7,7 @@ import { getFeaturedTestimonials, getAverageRating } from '../../controllers/ind
 import './Testimonials.css';
 
 export function Testimonials() {
-  const { setRef, isInView } = useInView<HTMLDivElement>(0.1);
+  const { setRef } = useInView<HTMLDivElement>(0.1);
   const testimonials = getFeaturedTestimonials();
   const averageRating = getAverageRating();
 

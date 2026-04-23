@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { Contact } from '../views/Contact/Contact';
+import { Contact } from './views/Contact';
 
 describe('Contact Component', () => {
   it('renders the contact form correctly', () => {

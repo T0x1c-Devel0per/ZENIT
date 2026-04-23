@@ -7,17 +7,20 @@ WORKDIR /app
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including devDependencies like TypeScript)
+RUN npm ci
 
 # Copy the rest of the application code to the working directory
 COPY . .
 
-# Build the frontend application
+# Build both frontend and backend
 RUN npm run build
+
+# Optional: Clean dev dependencies after build to keep the image small
+# RUN npm prune --production
 
 # Expose port 3000 to allow communication to/from the application
 EXPOSE 3000
 
-# Define the command to run the application
-CMD ["npm", "run", "server"]
+# Use the start script we configured in package.json
+CMD ["npm", "start"]

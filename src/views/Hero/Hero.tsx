@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { Button } from '../../components/Button/Button.js';
 import { Icon } from '../../components/Icon/Icon.js';
 import './Hero.css';
@@ -14,7 +14,7 @@ export function Hero() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
@@ -26,7 +26,7 @@ export function Hero() {
     }
   };
 
-  const statsVariants = {
+  const statsVariants: Variants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: {
       opacity: 1,

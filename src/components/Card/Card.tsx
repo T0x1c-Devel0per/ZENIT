@@ -6,9 +6,10 @@ interface CardProps {
   className?: string;
   hover?: boolean;
   padding?: 'none' | 'sm' | 'md' | 'lg';
+  style?: React.CSSProperties;
 }
 
-export function Card({ children, className, hover = true, padding = 'md' }: CardProps) {
+export function Card({ children, className, hover = true, padding = 'md', style }: CardProps) {
   return (
     <div
       className={cn(
@@ -17,6 +18,7 @@ export function Card({ children, className, hover = true, padding = 'md' }: Card
         `card--padding-${padding}`,
         className
       )}
+      style={style}
     >
       {children}
     </div>

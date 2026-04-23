@@ -33,7 +33,7 @@ export function Button({
         className
       )}
       disabled={disabled || loading}
-      {...props}
+      {...(props as any)}
     >
       {loading && <span className="btn__spinner" aria-hidden="true" />}
       <span className="btn__content">{children}</span>

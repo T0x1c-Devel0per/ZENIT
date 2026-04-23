@@ -7,7 +7,7 @@ import { getAllServices } from '../../controllers/index.js';
 import './Services.css';
 
 export function Services() {
-  const { setRef, isInView } = useInView<HTMLDivElement>(0.1);
+  const { setRef } = useInView<HTMLDivElement>(0.1);
   const services = getAllServices();
 
   return (
