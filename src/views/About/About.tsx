@@ -15,14 +15,14 @@ export function About() {
     <Section id="nosotros" variant="default" padding="lg">
       <ScrollParticles
         particles={[
-          { side: 'left',  top: '20%', size: 300, speed: 0.4, color: 'primary', opacity: 0.15 },
+          { side: 'left', top: '20%', size: 300, speed: 0.4, color: 'primary', opacity: 0.15 },
           { side: 'right', top: '65%', size: 200, speed: 0.6, color: 'secondary', opacity: 0.18 },
         ]}
       />
       <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div className="about-grid">
           <div className="about-content">
-            <span className="section-tag">Sobre SENIT SOLUTIONS</span>
+            <span className="section-tag">Sobre ZENIT SOLUTIONS</span>
             <h2 className="section-title">
               Más que limpieza, creamos{' '}
               <span className="text-primary">experiencias</span>

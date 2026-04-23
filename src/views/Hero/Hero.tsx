@@ -1,10 +1,14 @@
 import { motion, type Variants } from 'framer-motion';
 import { Button } from '../../components/Button/Button.js';
 import { Icon } from '../../components/Icon/Icon.js';
-import { HeroShapes } from './HeroShapes.js';
 import './Hero.css';
 
 export function Hero() {
+  // Evita que Framer Motion agregue translateZ(0) que arruina el ClearType en Windows
+  const textTransformTemplate = ({ x, y, rotate, scale }: any) => {
+    return `translate(${x || 0}, ${y || 0}) rotate(${rotate || 0}deg) scale(${scale || 1})`;
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -54,8 +58,6 @@ export function Hero() {
 
   return (
     <section id="inicio" className="hero">
-      <HeroShapes />
-
       <div className="container hero__container">
         <motion.div
           className="hero__content"
@@ -66,6 +68,7 @@ export function Hero() {
           <motion.div
             className="hero__badge"
             variants={itemVariants}
+            transformTemplate={textTransformTemplate}
           >
             <Icon name="sparkles" size="sm" />
             <span>Servicio profesional de limpieza</span>
@@ -74,6 +77,7 @@ export function Hero() {
           <motion.h1
             className="hero__title"
             variants={itemVariants}
+            transformTemplate={textTransformTemplate}
           >
             Limpieza que{' '}
             <span className="hero__title-highlight">inspira</span> confianza
@@ -82,8 +86,9 @@ export function Hero() {
           <motion.p
             className="hero__description"
             variants={itemVariants}
+            transformTemplate={textTransformTemplate}
           >
-            En SENIT SOLUTIONS transformamos tus espacios con servicios de limpieza
+            En ZENIT SOLUTIONS transformamos tus espacios con servicios de limpieza
             profesionales, ecológicos y personalizados. Resultados impecables
             que superan tus expectativas.
           </motion.p>
@@ -114,6 +119,7 @@ export function Hero() {
             <motion.div
               className="hero__stat"
               variants={itemVariants}
+              transformTemplate={textTransformTemplate}
             >
               <span className="hero__stat-value">500+</span>
               <span className="hero__stat-label">Clientes Felices</span>
@@ -121,6 +127,7 @@ export function Hero() {
             <motion.div
               className="hero__stat"
               variants={itemVariants}
+              transformTemplate={textTransformTemplate}
             >
               <span className="hero__stat-value">98%</span>
               <span className="hero__stat-label">Satisfacción</span>
@@ -128,6 +135,7 @@ export function Hero() {
             <motion.div
               className="hero__stat"
               variants={itemVariants}
+              transformTemplate={textTransformTemplate}
             >
               <span className="hero__stat-value">10+</span>
               <span className="hero__stat-label">Años Exp.</span>
@@ -153,7 +161,7 @@ export function Hero() {
             <div className="hero__image-placeholder">
               <img
                 src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80"
-                alt="Servicio profesional de limpieza SENIT SOLUTIONS"
+                alt="Servicio profesional de limpieza ZENIT SOLUTIONS"
                 style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-xl)' }}
               />
             </div>

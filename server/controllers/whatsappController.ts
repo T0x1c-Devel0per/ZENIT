@@ -49,8 +49,21 @@ class WhatsAppController {
 
           console.log(`[WhatsApp] 📩 Message received from ${from} (Type: ${type})`);
 
-          if (type === 'text') {
-            const text = message.text.body;
+          if (type === 'text' || type === 'interactive') {
+            let text = '';
+            
+            if (type === 'text') {
+              text = message.text.body;
+            } else if (type === 'interactive') {
+              if (message.interactive.type === 'button_reply') {
+                text = message.interactive.button_reply.title;
+                console.log(`[WhatsApp] 🔘 User clicked button: ${message.interactive.button_reply.id}`);
+              } else {
+                res.status(200).send('EVENT_RECEIVED');
+                return;
+              }
+            }
+
             console.log(`[WhatsApp] Content: "${text}"`);
 
             // ⚡ Respond 200 OK immediately
@@ -61,7 +74,13 @@ class WhatsAppController {
               try {
                 // 1. Generate AI Response
                 const aiResponse = await AIService.generateResponse(text);
-                await WhatsAppService.sendMessage(from, aiResponse);
+                
+                // Enviar la respuesta de la IA junto con los botones interactivos
+                await WhatsAppService.sendInteractiveButtons(from, aiResponse, [
+                  { id: 'btn_cotizar', title: 'Cotizar Servicio' },
+                  { id: 'btn_servicios', title: 'Ver Servicios' },
+                  { id: 'btn_humano', title: 'Hablar con Asesor' }
+                ]);
                 await WhatsAppService.markAsRead(messageId);
 
                 // 🔍 2. EXTRACTION: Detect lead data
@@ -71,8 +90,9 @@ class WhatsAppController {
                     console.log('[WhatsApp] 💎 Lead detected from chat:', extracted.name);
                     
                     try {
-                        // Limpiar teléfono para cumplir con el regex del modelo
+                        // Limpiar teléfono para cumplir con el regex del modelo y evitar saltos de línea
                         let cleanPhone = extracted.phone || from;
+                        cleanPhone = cleanPhone.replace(/[^\d+]/g, ''); // Deja solo números y signos +
                         if (!cleanPhone.startsWith('+')) cleanPhone = `+${cleanPhone}`;
 
                         // Guardar en MongoDB

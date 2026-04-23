@@ -10,7 +10,7 @@ dotenv.config();
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false, 
+  secure: false,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -30,13 +30,13 @@ export const sendContactNotification = async (
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
     console.warn('[Email] ⚠️ Credenciales SMTP no configuradas. Saltando envío.');
     console.log('Lead recibido:', { name, email, phone, service, message });
-    return true; 
+    return true;
   }
 
   try {
     const invoiceNumber = `ZEN-${Date.now()}`;
     const invoiceDate = new Date().toLocaleDateString('es-CO');
-    
+
     // Generar precio estimado (simulado para la cotización inicial)
     const estimatedPrice = Math.floor(Math.random() * 300000) + 150000;
 
@@ -49,13 +49,13 @@ export const sendContactNotification = async (
     };
 
     const mailOptions = {
-      from: `"SENIT SOLUTIONS" <${process.env.SMTP_USER}>`,
-      to: [process.env.CONTACT_EMAIL || process.env.SMTP_USER, email], 
-      subject: `Cotización de Servicio SENIT SOLUTIONS - ${invoiceNumber}`,
+      from: `"ZENIT SOLUTIONS" <${process.env.SMTP_USER}>`,
+      to: [process.env.CONTACT_EMAIL || process.env.SMTP_USER, email],
+      subject: `Cotización de Servicio ZENIT SOLUTIONS - ${invoiceNumber}`,
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
           <div style="background: #020617; padding: 30px; text-align: center; color: white;">
-            <h1 style="color: #38bdf8; margin: 0; letter-spacing: 2px;">SENIT SOLUTIONS</h1>
+            <h1 style="color: #38bdf8; margin: 0; letter-spacing: 2px;">ZENIT SOLUTIONS</h1>
             <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 14px;">Limpieza que Inspira Confianza</p>
           </div>
           
@@ -73,7 +73,7 @@ export const sendContactNotification = async (
             <p style="color: #475569; font-size: 14px; font-style: italic;">*Este valor es un estimado inicial. Un asesor humano confirmará el precio final contigo a la brevedad.</p>
             
             <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; text-align: center;">
-              <p style="margin: 0; font-weight: bold; color: #020617;">SENIT SOLUTIONS Colombia</p>
+              <p style="margin: 0; font-weight: bold; color: #020617;">ZENIT SOLUTIONS Colombia</p>
               <p style="margin: 5px 0; color: #64748b; font-size: 12px;">Bogotá, D.C. | Profesionalismo al Vapor</p>
             </div>
           </div>

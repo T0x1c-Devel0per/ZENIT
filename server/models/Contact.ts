@@ -28,7 +28,7 @@ const contactSchema: Schema = new Schema({
   phone: {
     type: String,
     trim: true,
-    match: [/^(\+57)?\s?(3\d{2})\s?\d{3}\s?\d{4}$|^(\+57)?\s?(3\d{2})\d{7}$/, 'Por favor ingrese un teléfono válido'],
+    match: [/^\+?[0-9\s\-\(\)]{7,20}$/, 'Por favor ingrese un teléfono válido'],
   },
   service: {
     type: String,

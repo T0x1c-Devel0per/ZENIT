@@ -29,7 +29,7 @@ function parseColor(token: string, isDark: boolean): THREE.Color {
   return new THREE.Color('#ffffff');
 }
 
-function Shape({ 
+export function BokehSphere({ 
   colorToken, 
   sizePx, 
   baseX, 
@@ -51,12 +51,11 @@ function Shape({
   const targetColor = useMemo(() => parseColor(colorToken, isDark), [colorToken, isDark]);
 
   // Mapeamos el tamaño aproximado en píxeles a unidades WebGL
-  // Aumentamos el multiplicador para que el "resplandor" sea amplio
   const scale = (sizePx / window.innerWidth) * viewport.width * 2.5;
 
   // Posición inicial
-  const x = baseX === 'right' ? viewport.width * 0.35 : (baseX === 'left' ? -viewport.width * 0.35 : viewport.width * 0.2);
-  const y = baseY === 'top' ? viewport.height * 0.35 : (baseY === 'bottom' ? -viewport.height * 0.35 : 0);
+  const x = baseX === 'right' ? viewport.width * 0.35 : (baseX === 'left' ? -viewport.width * 0.35 : (baseX === 'center' ? 0 : viewport.width * 0.2));
+  const y = baseY === 'top' ? viewport.height * 0.35 : (baseY === 'bottom' ? -viewport.height * 0.35 : (baseY === 'center' ? 0 : 0));
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
@@ -91,32 +90,5 @@ function Shape({
         blending={THREE.AdditiveBlending}
       />
     </mesh>
-  );
-}
-
-export function HeroShapes() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    setIsDark(document.documentElement.classList.contains('dark'));
-    const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, opacity: 0.8 }}>
-      <Canvas
-        camera={{ position: [0, 0, 5], fov: 50 }}
-        gl={{ alpha: true, antialias: false }}
-        dpr={[1, 2]}
-      >
-        <Shape colorToken="primary" sizePx={400} baseX="right" baseY="top" animType={1} isDark={isDark} />
-        <Shape colorToken="secondary" sizePx={300} baseX="left" baseY="bottom" animType={2} isDark={isDark} />
-        <Shape colorToken="accent" sizePx={200} baseX="right" baseY="center" animType={3} isDark={isDark} />
-      </Canvas>
-    </div>
   );
 }

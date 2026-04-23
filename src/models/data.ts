@@ -62,7 +62,7 @@ export const testimonials: Testimonial[] = [
     id: '1',
     name: 'María González',
     role: 'Cliente Residencial',
-    content: 'El servicio de SENIT SOLUTIONS transformó completamente mi hogar. El equipo es profesional, puntual y detallista. ¡Los recomiendo al 100%!',
+    content: 'El servicio de ZENIT SOLUTIONS transformó completamente mi hogar. El equipo es profesional, puntual y detallista. ¡Los recomiendo al 100%!',
     rating: 5,
   },
   {
@@ -76,7 +76,7 @@ export const testimonials: Testimonial[] = [
     id: '3',
     name: 'Ana Martínez',
     role: 'Cliente Post-Construcción',
-    content: 'Después de la remodelación de mi casa, SENIT SOLUTIONS dejó todo perfecto. Quitaron hasta el polvo más fino. Excelente relación calidad-precio.',
+    content: 'Después de la remodelación de mi casa, ZENIT SOLUTIONS dejó todo perfecto. Quitaron hasta el polvo más fino. Excelente relación calidad-precio.',
     rating: 5,
   },
 ];

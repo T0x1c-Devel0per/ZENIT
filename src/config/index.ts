@@ -1,6 +1,6 @@
 export const config = {
   app: {
-    name: 'SENIT SOLUTIONS',
+    name: 'ZENIT SOLUTIONS',
     tagline: 'Excelencia en Limpieza y Desinfección Profesional',
     description: 'Servicios profesionales de limpieza y desinfección al vapor en Bogotá.',
   },
