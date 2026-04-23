@@ -5,10 +5,17 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
  * Handles generating responses for customer inquiries.
  */
 class AIService {
-  private static genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-  private static model = AIService.genAI.getGenerativeModel({
-    model: 'gemini-flash-latest',
-    systemInstruction: `
+  private static _model: any = null;
+
+  private static getModel() {
+    if (!this._model) {
+      const apiKey = process.env.GEMINI_API_KEY || '';
+      if (!apiKey) throw new Error('GEMINI_API_KEY no está configurada');
+      
+      const genAI = new GoogleGenerativeAI(apiKey);
+      this._model = genAI.getGenerativeModel({
+        model: 'gemini-2.5-flash-lite',
+        systemInstruction: `
       Tu nombre es "ZENIT Bot", el asesor inteligente de ZENIT SOLUTIONS, una empresa líder en limpieza al vapor profesional en Bogotá, Colombia.
       
       Tus objetivos son:
@@ -23,7 +30,10 @@ class AIService {
       
       Responde de forma concisa y profesional. Usa emojis elegantes. Mantén el tono de un asesor de alto nivel.
     `,
-  });
+      });
+    }
+    return this._model;
+  }
 
   /**
    * Generate an AI response for a given prompt
@@ -34,7 +44,7 @@ class AIService {
         return 'Lo siento, mi servicio de inteligencia no está configurado. Por favor contacta a un asesor humano.';
       }
 
-      const result = await this.model.generateContent(prompt);
+      const result = await this.getModel().generateContent(prompt);
       const response = await result.response;
       return response.text();
     } catch (error: any) {
@@ -53,7 +63,7 @@ class AIService {
 
       const base64Audio = audioBuffer.toString('base64');
 
-      const result = await this.model.generateContent([
+      const result = await this.getModel().generateContent([
         {
           inlineData: {
             mimeType: mimeType,
