@@ -1,26 +1,14 @@
-import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 /**
- * Servicio de Correo ZENIT
- * Configurado para enviar cotizaciones y notificaciones de leads.
+ * Servicio de Correo ZENIT (Vía Brevo API)
+ * Configurado para enviar cotizaciones y notificaciones de leads de forma estable.
  */
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  connectionTimeout: 10000, // 10 segundos
-  greetingTimeout: 10000,
-});
 
 /**
- * Envía una notificación de cotización a ZENIT y al Cliente
+ * Envía una notificación de cotización a ZENIT y al Cliente usando Brevo API
  */
 export const sendContactNotification = async (
   name: string,
@@ -29,8 +17,12 @@ export const sendContactNotification = async (
   service: string,
   message: string
 ): Promise<boolean> => {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn('[Email] ⚠️ Credenciales SMTP no configuradas. Saltando envío.');
+  const apiKey = process.env.BREVO_API_KEY;
+  const senderEmail = process.env.SENDER_EMAIL || 'jpssanchez03@gmail.com';
+  const adminEmail = process.env.CONTACT_EMAIL || 'jpssanchez03@gmail.com';
+
+  if (!apiKey) {
+    console.warn('[Email] ⚠️ BREVO_API_KEY no configurada. Saltando envío.');
     console.log('Lead recibido:', { name, email, phone, service, message });
     return true;
   }
@@ -50,11 +42,7 @@ export const sendContactNotification = async (
       }).format(amount);
     };
 
-    const mailOptions = {
-      from: `"ZENIT" <${process.env.SENDER_EMAIL || process.env.SMTP_USER}>`,
-      to: [process.env.CONTACT_EMAIL || process.env.SMTP_USER, email],
-      subject: `Cotización de Servicio ZENIT SOLUTIONS - ${invoiceNumber}`,
-      html: `
+    const emailHtml = `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
           <div style="background: #020617; padding: 30px; text-align: center; color: white;">
             <h1 style="color: #38bdf8; margin: 0; letter-spacing: 2px;">ZENIT SOLUTIONS</h1>
@@ -80,14 +68,35 @@ export const sendContactNotification = async (
             </div>
           </div>
         </div>
-      `,
-    };
+    `;
 
-    await transporter.sendMail(mailOptions);
-    console.log(`[Email] ✅ Cotización enviada a ${email}`);
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': apiKey,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        sender: { name: "ZENIT SOLUTIONS", email: senderEmail },
+        to: [
+          { email: adminEmail, name: "Admin ZENIT" },
+          { email: email, name: name }
+        ],
+        subject: `Cotización de Servicio ZENIT SOLUTIONS - ${invoiceNumber}`,
+        htmlContent: emailHtml
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Brevo API Error: ${JSON.stringify(errorData)}`);
+    }
+
+    console.log(`[Email] ✅ Cotización enviada vía API a ${email} y admin`);
     return true;
-  } catch (error) {
-    console.error('[Email] ❌ Error enviando correo:', error);
+  } catch (error: any) {
+    console.error('[Email] ❌ Error enviando correo vía API:', error.message);
     return false;
   }
 };
