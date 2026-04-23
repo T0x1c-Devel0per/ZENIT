@@ -42,6 +42,34 @@ class AIService {
       return 'Lo siento, tuve un pequeño problema procesando tu mensaje. ¿Podrías repetirlo?';
     }
   }
+  /**
+   * Generate an AI response from an audio file (Voice Note)
+   */
+  static async generateResponseFromAudio(audioBuffer: Buffer, mimeType: string): Promise<string> {
+    try {
+      if (!process.env.GEMINI_API_KEY) {
+        return 'Lo siento, mi servicio de inteligencia no está configurado.';
+      }
+
+      const base64Audio = audioBuffer.toString('base64');
+
+      const result = await this.model.generateContent([
+        {
+          inlineData: {
+            mimeType: mimeType,
+            data: base64Audio
+          }
+        },
+        { text: "Responde a este mensaje de voz de forma natural, como si estuvieras teniendo una conversación por WhatsApp." }
+      ]);
+      
+      const response = await result.response;
+      return response.text();
+    } catch (error: any) {
+      console.error('[AIService] ❌ Error generating content from audio:', error.message);
+      return 'Lo siento, tuve un problema escuchando tu nota de voz. ¿Podrías escribirlo o intentarlo de nuevo?';
+    }
+  }
 }
 
 export default AIService;

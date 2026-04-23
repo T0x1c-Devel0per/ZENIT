@@ -192,6 +192,112 @@ class WhatsAppService {
       return false;
     }
   }
+
+  /**
+   * Download a media file from WhatsApp given its media ID
+   */
+  static async downloadMedia(mediaId: string): Promise<Buffer> {
+    const token = process.env.WHATSAPP_TOKEN;
+    if (!token) throw new Error('WhatsApp Token missing');
+
+    // 1. Get media URL
+    const urlReq = await fetch(`${this.BASE_URL}/${mediaId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const urlData = await urlReq.json() as any;
+    
+    if (!urlReq.ok) {
+      throw new Error(urlData.error?.message || 'Failed to get media URL');
+    }
+
+    // 2. Download actual binary
+    const mediaReq = await fetch(urlData.url, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    
+    if (!mediaReq.ok) {
+      throw new Error('Failed to download media binary');
+    }
+
+    const arrayBuffer = await mediaReq.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+  }
+
+  /**
+   * Upload a media file to WhatsApp and return its new Media ID
+   */
+  static async uploadMedia(buffer: Buffer, mimeType: string): Promise<string> {
+    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+    const token = process.env.WHATSAPP_TOKEN;
+    if (!phoneId || !token) throw new Error('WhatsApp config missing');
+
+    const url = `${this.BASE_URL}/${phoneId}/media`;
+
+    // Create a Blob from the buffer to append to FormData
+    const blob = new Blob([buffer], { type: mimeType });
+    const formData = new FormData();
+    formData.append('messaging_product', 'whatsapp');
+    formData.append('file', blob, 'audio.mp3');
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+        // Do NOT set Content-Type to multipart/form-data manually, fetch will do it with the correct boundary
+      },
+      body: formData
+    });
+
+    const data = await response.json() as any;
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'Error uploading media to WhatsApp');
+    }
+
+    return data.id; // Return the new media_id
+  }
+
+  /**
+   * Send an audio message to a user
+   */
+  static async sendAudio(to: string, mediaId: string) {
+    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+    const token = process.env.WHATSAPP_TOKEN;
+    if (!phoneId || !token) throw new Error('WhatsApp config missing');
+
+    const url = `${this.BASE_URL}/${phoneId}/messages`;
+
+    const payload = {
+      messaging_product: 'whatsapp',
+      recipient_type: 'individual',
+      to: to,
+      type: 'audio',
+      audio: {
+        id: mediaId
+      }
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json() as any;
+      if (!response.ok) {
+        throw new Error(data.error?.message || 'Error sending audio message');
+      }
+
+      console.log(`[WhatsAppService] 🎵 Audio sent to ${to}`);
+      return data;
+    } catch (error: any) {
+      console.error(`[WhatsAppService] ❌ Error sending audio:`, error.message);
+      throw error;
+    }
+  }
 }
 
 export default WhatsAppService;

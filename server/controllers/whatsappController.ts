@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import WhatsAppService from '../services/whatsappService.js';
 import AIService from '../services/aiService.js';
+import TTSService from '../services/ttsService.js';
 import ExtractionService from '../services/extractionService.js';
 import Contact from '../models/Contact.js';
 import { sendContactNotification } from '../utils/email.js';
@@ -49,11 +50,13 @@ class WhatsAppController {
 
           console.log(`[WhatsApp] 📩 Message received from ${from} (Type: ${type})`);
 
-          if (type === 'text' || type === 'interactive') {
+          if (type === 'text' || type === 'interactive' || type === 'audio') {
             let text = '';
+            let mediaId = '';
             
             if (type === 'text') {
               text = message.text.body;
+              console.log(`[WhatsApp] Content: "${text}"`);
             } else if (type === 'interactive') {
               if (message.interactive.type === 'button_reply') {
                 text = message.interactive.button_reply.title;
@@ -62,9 +65,10 @@ class WhatsAppController {
                 res.status(200).send('EVENT_RECEIVED');
                 return;
               }
+            } else if (type === 'audio') {
+              mediaId = message.audio.id;
+              console.log(`[WhatsApp] 🎤 Audio received. Media ID: ${mediaId}`);
             }
-
-            console.log(`[WhatsApp] Content: "${text}"`);
 
             // ⚡ Respond 200 OK immediately
             res.status(200).send('EVENT_RECEIVED');
@@ -72,15 +76,41 @@ class WhatsAppController {
             // 🤖 Background Logic
             (async () => {
               try {
-                // 1. Generate AI Response
-                const aiResponse = await AIService.generateResponse(text);
+                let aiResponse = '';
+
+                // Si es un audio, descargamos, pasamos a Gemini, y la respuesta la mandamos a TTS
+                if (type === 'audio' && mediaId) {
+                  console.log('[WhatsApp] ⏳ Downloading audio from Meta...');
+                  const audioBuffer = await WhatsAppService.downloadMedia(mediaId);
+                  
+                  console.log('[WhatsApp] 🧠 Processing audio with Gemini...');
+                  const mimeType = message.audio.mime_type || 'audio/ogg';
+                  aiResponse = await AIService.generateResponseFromAudio(audioBuffer, mimeType);
+                  
+                  console.log('[WhatsApp] 🎙️ Generating Voice Note with OpenAI TTS...');
+                  try {
+                    const ttsBuffer = await TTSService.generateAudio(aiResponse);
+                    const newMediaId = await WhatsAppService.uploadMedia(ttsBuffer, 'audio/mpeg');
+                    await WhatsAppService.sendAudio(from, newMediaId);
+                  } catch (ttsErr: any) {
+                    console.error('[WhatsApp] ❌ Failed to generate/send TTS audio, falling back to text:', ttsErr.message);
+                    // Si falla el TTS (ej. no hay API key), cae en fallback a enviar el texto
+                    await WhatsAppService.sendInteractiveButtons(from, aiResponse, [
+                      { id: 'btn_cotizar', title: 'Cotizar Servicio' },
+                      { id: 'btn_servicios', title: 'Ver Servicios' },
+                      { id: 'btn_humano', title: 'Hablar con Asesor' }
+                    ]);
+                  }
+                } else {
+                  // Flujo normal de texto
+                  aiResponse = await AIService.generateResponse(text);
+                  await WhatsAppService.sendInteractiveButtons(from, aiResponse, [
+                    { id: 'btn_cotizar', title: 'Cotizar Servicio' },
+                    { id: 'btn_servicios', title: 'Ver Servicios' },
+                    { id: 'btn_humano', title: 'Hablar con Asesor' }
+                  ]);
+                }
                 
-                // Enviar la respuesta de la IA junto con los botones interactivos
-                await WhatsAppService.sendInteractiveButtons(from, aiResponse, [
-                  { id: 'btn_cotizar', title: 'Cotizar Servicio' },
-                  { id: 'btn_servicios', title: 'Ver Servicios' },
-                  { id: 'btn_humano', title: 'Hablar con Asesor' }
-                ]);
                 await WhatsAppService.markAsRead(messageId);
 
                 // 🔍 2. EXTRACTION: Detect lead data
