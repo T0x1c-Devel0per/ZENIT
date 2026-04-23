@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 async function testGemini() {
-  const apiKey = 'AIzaSyDuEvFLDEmAjKSps3ggZ9bTv_nWYGjJPHU';
+  const apiKey = process.env.GEMINI_API_KEY || '';
   
   if (!apiKey) {
     console.error('❌ No hay API Key configurada.');

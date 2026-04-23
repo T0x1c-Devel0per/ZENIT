@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 async function testGemini() {
-  const apiKey = 'AIzaSyDuEvFLDEmAjKSps3ggZ9bTv_nWYGjJPHU';
+  const apiKey = process.env.GEMINI_API_KEY || '';
   
   console.log('⏳ Probando conexión con Google Gemini 2.0 Flash...');
 
