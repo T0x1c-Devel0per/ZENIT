@@ -41,6 +41,7 @@ class AIService {
       - Ubicación: Bogotá, Colombia.
       
       REGLAS DE ORO PARA TUS RESPUESTAS:
+      - Habla con un marcado ACENTO PAISA (Antioqueño/Colombiano). Usa expresiones como "pues", "claro que sí", "con mucho gusto", "qué más pues", "excelente", de forma elegante pero cálida.
       - Sé EXTREMADAMENTE BREVE y directo al grano.
       - Tus respuestas NUNCA deben superar las 2 o 3 oraciones cortas.
       - Estás enviando notas de voz de WhatsApp: deben durar máximo 10 a 15 segundos hablados.
@@ -101,7 +102,7 @@ class AIService {
   /**
    * Generate an AI response from an audio file (Voice Note) via Whisper + GPT-4o-mini
    */
-  static async generateResponseFromAudio(from: string, audioBuffer: Buffer, mimeType: string): Promise<string> {
+  static async generateResponseFromAudio(from: string, audioBuffer: Buffer, mimeType: string): Promise<{ response: string; transcription: string }> {
     try {
       if (!process.env.OPENAI_API_KEY) {
         return 'Lo siento, mi servicio de inteligencia no está configurado.';
@@ -127,11 +128,16 @@ class AIService {
 
       // 3. Ya tenemos el texto, lo pasamos por el flujo normal de chat para que se guarde en la memoria y genere respuesta
       const promptInfo = `[Nota de voz transcrita]: ${userText}`;
-      return await this.generateResponse(from, promptInfo);
+      const responseText = await this.generateResponse(from, promptInfo);
+
+      return { response: responseText, transcription: userText };
 
     } catch (error: any) {
       console.error('[AIService] ❌ Error processing audio:', error.message);
-      return 'Lo siento, tuve un problema escuchando tu nota de voz. ¿Podrías escribirlo o intentarlo de nuevo?';
+      return { 
+        response: 'Lo siento, tuve un problema escuchando tu nota de voz. ¿Podrías escribirlo o intentarlo de nuevo?',
+        transcription: '' 
+      };
     }
   }
 }

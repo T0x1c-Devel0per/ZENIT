@@ -81,14 +81,16 @@ class WhatsAppController {
                 // Activar el indicador de 'Escribiendo...' o 'Grabando audio...' inmediatamente
                 await WhatsAppService.sendTypingIndicator(from);
 
-                // Si es un audio, descargamos, pasamos a Gemini, y la respuesta la mandamos a TTS
+                // Si es un audio, descargamos, pasamos a Whisper, y la respuesta la mandamos a TTS
                 if (type === 'audio' && mediaId) {
                   console.log('[WhatsApp] ⏳ Downloading audio from Meta...');
                   const audioBuffer = await WhatsAppService.downloadMedia(mediaId);
                   
                   console.log('[WhatsApp] 🧠 Processing audio with Whisper & GPT-4o-mini...');
                   const mimeType = message.audio.mime_type || 'audio/ogg';
-                  aiResponse = await AIService.generateResponseFromAudio(from, audioBuffer, mimeType);
+                  const audioResult = await AIService.generateResponseFromAudio(from, audioBuffer, mimeType);
+                  aiResponse = audioResult.response;
+                  text = audioResult.transcription; // Guardar transcripción para extraer datos
                   
                   console.log('[WhatsApp] 🎙️ Generating Voice Note con OpenAI TTS...');
                   try {
@@ -97,7 +99,6 @@ class WhatsAppController {
                     await WhatsAppService.sendAudio(from, newMediaId);
                   } catch (ttsErr: any) {
                     console.error('[WhatsApp] ❌ Failed to generate/send TTS audio, falling back to text:', ttsErr.message);
-                    // Si falla el TTS (ej. no hay API key), cae en fallback a enviar el texto
                     await WhatsAppService.sendInteractiveButtons(from, aiResponse, [
                       { id: 'btn_cotizar', title: 'Cotizar Servicio' },
                       { id: 'btn_servicios', title: 'Ver Servicios' },
@@ -117,40 +118,41 @@ class WhatsAppController {
                 await WhatsAppService.markAsRead(messageId);
 
                 // 🔍 2. EXTRACTION: Detect lead data
-                const extracted = await ExtractionService.extractInfo(text);
-                
-                if (extracted && extracted.name && extracted.email && extracted.service) {
-                    console.log('[WhatsApp] 💎 Lead detected from chat:', extracted.name);
-                    
-                    try {
-                        // Limpiar teléfono para cumplir con el regex del modelo y evitar saltos de línea
-                        let cleanPhone = extracted.phone || from;
-                        cleanPhone = cleanPhone.replace(/[^\d+]/g, ''); // Deja solo números y signos +
-                        if (!cleanPhone.startsWith('+')) cleanPhone = `+${cleanPhone}`;
+                if (text) {
+                  const extracted = await ExtractionService.extractInfo(text);
+                  
+                  // Validación más flexible: Si tenemos nombre y al menos un dato de contacto (email o el mismo número de origen)
+                  if (extracted && extracted.name && (extracted.phone || extracted.email || from)) {
+                      console.log('[WhatsApp] 💎 Lead detected from chat:', extracted.name);
+                      
+                      try {
+                          // Limpiar teléfono
+                          let cleanPhone = extracted.phone || from;
+                          cleanPhone = cleanPhone.replace(/[^\d+]/g, ''); 
+                          if (!cleanPhone.startsWith('+')) cleanPhone = `+${cleanPhone}`;
 
-                        // Guardar en MongoDB
-                        const newContact = new Contact({
-                            name: extracted.name,
-                            email: extracted.email,
-                            phone: cleanPhone,
-                            service: extracted.service,
-                            message: extracted.message || text
-                        });
-                        
-                        await newContact.save();
-                        console.log('[WhatsApp] 💾 Contact saved to MongoDB');
+                          const newContact = new Contact({
+                              name: extracted.name,
+                              email: extracted.email || 'no-email@zenit.com',
+                              phone: cleanPhone,
+                              service: extracted.service || 'Interesado en servicios de limpieza',
+                              message: extracted.message || text
+                          });
+                          
+                          await newContact.save();
+                          console.log('[WhatsApp] 💾 Contact saved to MongoDB');
 
-                        // Enviar Email de Cotización
-                        await sendContactNotification(
-                            extracted.name,
-                            extracted.email,
-                            cleanPhone,
-                            extracted.service,
-                            extracted.message || text
-                        );
-                    } catch (saveError: any) {
-                        console.error('[WhatsApp] ❌ Error saving/emailing lead:', saveError.message);
-                    }
+                          await sendContactNotification(
+                              extracted.name,
+                              extracted.email || 'no-email@zenit.com',
+                              cleanPhone,
+                              extracted.service || 'Interesado en servicios de limpieza',
+                              extracted.message || text
+                          );
+                      } catch (saveError: any) {
+                          console.error('[WhatsApp] ❌ Error saving/emailing lead:', saveError.message);
+                      }
+                  }
                 }
               } catch (aiError: any) {
                 console.error('[WhatsAppController] ❌ Background AI error:', aiError.message);
