@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express, { type Request, Response } from 'express';
 import cors from 'cors';
 import compression from 'compression';
