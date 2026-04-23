@@ -7,7 +7,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 class AIService {
   private static genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
   private static model = AIService.genAI.getGenerativeModel({ 
-    model: 'gemini-2.0-flash',
+    model: 'gemini-flash-latest',
     systemInstruction: `
       Eres el asistente virtual experto de SteamClean, una empresa líder en limpieza al vapor profesional en Bogotá, Colombia.
       
