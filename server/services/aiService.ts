@@ -13,7 +13,7 @@ if (!globalThis.File) {
  */
 class AIService {
   private static _openai: OpenAI | null = null;
-  
+
   // Memoria in-memory (role: 'user' | 'assistant', content: string)
   private static chatHistory = new Map<string, any[]>();
 
@@ -41,14 +41,18 @@ class AIService {
       Tu nombre es "ZENIT Bot", el asesor inteligente de ZENIT SOLUTIONS, una empresa líder en limpieza al vapor profesional en Bogotá, Colombia.
       
       PERSONALIDAD Y TONO (CRÍTICO):
-      - Habla con un tono BOGOTANO (Rolo) profesional, neutro y extremadamente educado.
-      - PROHIBIDO: Usar modismos paisas como "pues", "qué más pues", "hágale", "con mucho gusto pues", "excelente pues".
-      - Usa expresiones cordiales como "con mucho gusto", "es un placer saludarle", "claro que sí", "estamos para servirle".
-      - Sé muy cordial, respetuoso y servicial.
+      - Habla con un tono carismatico, amable y profesional, sin nungun acento.
+      - Sé muy carismatico, respetuoso y servicial.
       
-      Tus objetivos son:
-      1. Responder preguntas sobre nuestros servicios premium en Bogotá.
-      2. Si el cliente quiere una cotización, pídele su nombre, email, teléfono y el servicio.
+      NUESTROS SERVICIOS OFICIALES:
+      1. Limpieza Residencial: Hogares impecables con productos ecológicos y técnicas profesionales.
+      2. Limpieza Comercial: Oficinas, locales comerciales, cristales y mantenimiento de áreas comunes.
+      3. Limpieza Post-Construcción: Remoción de escombros finos, pulido de pisos y superficies delicadas tras obras o remodelaciones.
+      4. Limpieza Especializada: Expertos en Limpieza de Tapicería (sofás, sillas), Tratamiento de Alfombras, Desinfección de espacios y servicios para eventos.
+      
+      OBJETIVOS:
+      - Responder dudas sobre estos servicios.
+      - Para cotizaciones, pedir: nombre, email, teléfono y servicio de interés.
       
       REGLAS DE ORO:
       - IDENTIDAD: En cada respuesta (especialmente la primera), menciónanos como ZENIT SOLUTIONS.
@@ -71,7 +75,7 @@ class AIService {
 
       // 1. Recuperar historial del usuario
       let history = this.chatHistory.get(from) || [];
-      
+
       // 2. Agregar el mensaje actual del usuario al historial
       history.push({ role: 'user', content: prompt });
 
@@ -117,7 +121,7 @@ class AIService {
       }
 
       const openai = this.getClient();
-      
+
       // 1. Convertir el buffer a un archivo compatible con OpenAI (usando su utilidad toFile)
       // MimeType viene de WhatsApp, usualmente es audio/ogg
       const fileExtension = mimeType.includes('ogg') ? 'ogg' : 'mp3';
@@ -142,9 +146,9 @@ class AIService {
 
     } catch (error: any) {
       console.error('[AIService] ❌ Error processing audio:', error.message);
-      return { 
+      return {
         response: 'Lo siento, tuve un problema escuchando tu nota de voz. ¿Podrías escribirlo o intentarlo de nuevo?',
-        transcription: '' 
+        transcription: ''
       };
     }
   }
