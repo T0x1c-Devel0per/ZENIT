@@ -17,6 +17,10 @@ class AIService {
   // Memoria in-memory (role: 'user' | 'assistant', content: string)
   private static chatHistory = new Map<string, any[]>();
 
+  static getChatHistory(from: string) {
+    return this.chatHistory.get(from) || [];
+  }
+
   private static getClient(): OpenAI {
     if (!this._openai) {
       const apiKey = process.env.OPENAI_API_KEY || '';
@@ -41,8 +45,9 @@ class AIService {
       - Ubicación: Bogotá, Colombia.
       
       REGLAS DE ORO PARA TUS RESPUESTAS:
-      - Habla con un marcado ACENTO PAISA (Antioqueño/Colombiano). Sé muy cálido, carismático y servicial. Usa expresiones como "pues", "claro que sí", "con mucho gusto", "qué más pues", "excelente", "un gusto saludarlo".
-      - IDENTIDAD: En cada respuesta (especialmente la primera), menciónanos como ZENIT SOLUTIONS y destaca que somos expertos en limpieza profunda al vapor.
+      - Habla con un tono BOGOTANO (Rolo) profesional, neutro y educado. Sé muy cordial, respetuoso y servicial. Usa expresiones como "con mucho gusto", "es un placer saludarle", "claro que sí".
+      - IDENTIDAD: En cada respuesta (especialmente la primera), menciónanos como ZENIT SOLUTIONS y destaca que somos expertos en limpieza profunda al vapor. Muestra el profesionalismo de nuestra sede en Bogotá.
+      - CIERRE DEL PRIMER MENSAJE: En tu primer contacto con el cliente, termina siempre con la pregunta exacta: "¿Qué vamos a limpiar hoy?".
       - Sé BREVE y directo al grano, pero NO ignores tu identidad corporativa.
       - Tus respuestas deben tener entre 2 y 4 oraciones máximo.
       - Estás enviando notas de voz de WhatsApp: deben sonar naturales y profesionales.

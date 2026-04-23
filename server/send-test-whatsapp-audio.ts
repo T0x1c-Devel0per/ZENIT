@@ -6,7 +6,7 @@ dotenv.config();
 
 async function sendTestAudio() {
   const to = '573144457149'; // Tu número
-  const filePath = 'elevenlabs-test.mp3';
+  const filePath = 'zenit-song.mp3';
 
   console.log(`📤 Intentando enviar audio de prueba a ${to}...`);
 

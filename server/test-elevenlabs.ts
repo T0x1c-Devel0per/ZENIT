@@ -7,7 +7,7 @@ dotenv.config();
 async function testElevenLabs() {
   console.log('🧪 Iniciando prueba de voz con ElevenLabs...');
 
-  const testText = "Hola, soy el asistente virtual de ZENIT SOLUTIONS. Es un gusto saludarte. Estamos listos para dejar tus espacios impecables con nuestra tecnología de limpieza al vapor.";
+  const testText = "¡ZENIT SOLUTIONS! ¡ZENIT SOLUTIONS! ... ¡Qué más pues! Soy ZeniBot, la inteligencia de ZENIT SOLUTIONS. Tu asesor experto en limpieza profunda al vapor. Estoy listo para dejar tus espacios impecables... ¿En qué te ayudo hoy?";
 
   try {
     const audioBuffer = await TTSService.generateAudio(testText);

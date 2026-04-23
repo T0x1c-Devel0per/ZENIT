@@ -81,6 +81,13 @@ class WhatsAppController {
                 // Activar el indicador de 'Escribiendo...' o 'Grabando audio...' inmediatamente
                 await WhatsAppService.sendTypingIndicator(from);
 
+                // 🎵 Bienvenida con Jingle pre-grabado (Solo la primera vez para ahorrar tokens)
+                const isNewUser = !AIService.getChatHistory(from) || AIService.getChatHistory(from).length === 0;
+                if (isNewUser && process.env.WELCOME_AUDIO_MEDIA_ID) {
+                  console.log('[WhatsApp] 🎵 Sending welcome jingle (pre-recorded)...');
+                  await WhatsAppService.sendAudio(from, process.env.WELCOME_AUDIO_MEDIA_ID);
+                }
+
                 // Si es un audio, descargamos, pasamos a Whisper, y la respuesta la mandamos a TTS
                 if (type === 'audio' && mediaId) {
                   console.log('[WhatsApp] ⏳ Downloading audio from Meta...');
@@ -99,20 +106,12 @@ class WhatsAppController {
                     await WhatsAppService.sendAudio(from, newMediaId);
                   } catch (ttsErr: any) {
                     console.error('[WhatsApp] ❌ Failed to generate/send TTS audio, falling back to text:', ttsErr.message);
-                    await WhatsAppService.sendInteractiveButtons(from, aiResponse, [
-                      { id: 'btn_cotizar', title: 'Cotizar Servicio' },
-                      { id: 'btn_servicios', title: 'Ver Servicios' },
-                      { id: 'btn_humano', title: 'Hablar con Asesor' }
-                    ]);
+                    await WhatsAppService.sendMessage(from, aiResponse);
                   }
                 } else {
                   // Flujo normal de texto
                   aiResponse = await AIService.generateResponse(from, text);
-                  await WhatsAppService.sendInteractiveButtons(from, aiResponse, [
-                    { id: 'btn_cotizar', title: 'Cotizar Servicio' },
-                    { id: 'btn_servicios', title: 'Ver Servicios' },
-                    { id: 'btn_humano', title: 'Hablar con Asesor' }
-                  ]);
+                  await WhatsAppService.sendMessage(from, aiResponse);
                 }
                 
                 await WhatsAppService.markAsRead(messageId);
