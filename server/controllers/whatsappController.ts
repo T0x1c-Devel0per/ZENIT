@@ -84,12 +84,14 @@ class WhatsAppController {
                 // 🎵 Bienvenida con Jingle pre-grabado (Solo la primera vez para ahorrar tokens)
                 const history = AIService.getChatHistory(from);
                 const isNewUser = !history || history.length === 0;
-                console.log(`[WhatsApp] 🔍 Check New User: ${isNewUser}, History Length: ${history?.length || 0}`);
-                console.log(`[WhatsApp] 🔍 Welcome Media ID: ${process.env.WELCOME_AUDIO_MEDIA_ID}`);
-
+                
                 if (isNewUser && process.env.WELCOME_AUDIO_MEDIA_ID) {
-                  console.log('[WhatsApp] 🎵 Sending welcome jingle (pre-recorded)...');
+                  console.log(`[WhatsApp] 🎵 Sending welcome jingle to new user ${from}...`);
                   await WhatsAppService.sendAudio(from, process.env.WELCOME_AUDIO_MEDIA_ID);
+                  
+                  // Inicializar historial inmediatamente para que el siguiente mensaje no dispare la canción
+                  // (Incluso si la respuesta de la IA tarda un poco)
+                  AIService.initHistory(from); 
                 }
 
                 // Si es un audio, descargamos, pasamos a Whisper, y la respuesta la mandamos a TTS
