@@ -163,33 +163,62 @@ class WhatsAppService {
   }
 
   /**
-   * Mark a received message as read
+   * Mark a message as read
    */
-  static async markAsRead(messageId: string) {
-    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-    const token = process.env.WHATSAPP_TOKEN;
-
-    const url = `${this.BASE_URL}/${phoneId}/messages`;
-
-    const payload = {
-      messaging_product: 'whatsapp',
-      status: 'read',
-      message_id: messageId,
-    };
-
+  static async markAsRead(messageId: string): Promise<void> {
     try {
+      const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+      const token = process.env.WHATSAPP_TOKEN;
+
+      if (!phoneId || !token) throw new Error('WhatsApp config missing');
+
+      const url = `${this.BASE_URL}/${phoneId}/messages`;
+      
       await fetch(url, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          status: 'read',
+          message_id: messageId,
+        }),
       });
-      return true;
-    } catch (error) {
-      console.error(`[WhatsAppService] ❌ Error marking as read:`, error);
-      return false;
+    } catch (error: any) {
+      console.error('[WhatsAppService] ❌ Error marking message as read:', error.message);
+    }
+  }
+
+  /**
+   * Simulates 'Typing...' or 'Recording audio...' indicator
+   */
+  static async sendTypingIndicator(to: string): Promise<void> {
+    try {
+      const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+      const token = process.env.WHATSAPP_TOKEN;
+
+      if (!phoneId || !token) return;
+
+      const url = `${this.BASE_URL}/${phoneId}/messages`;
+      
+      await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          recipient_type: 'individual',
+          to: to,
+          type: 'sender_action',
+          sender_action: 'typing_on',
+        }),
+      });
+    } catch (error: any) {
+      console.error('[WhatsAppService] ❌ Error sending typing indicator:', error.message);
     }
   }
 

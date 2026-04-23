@@ -78,6 +78,9 @@ class WhatsAppController {
               try {
                 let aiResponse = '';
 
+                // Activar el indicador de 'Escribiendo...' o 'Grabando audio...' inmediatamente
+                await WhatsAppService.sendTypingIndicator(from);
+
                 // Si es un audio, descargamos, pasamos a Gemini, y la respuesta la mandamos a TTS
                 if (type === 'audio' && mediaId) {
                   console.log('[WhatsApp] ⏳ Downloading audio from Meta...');
@@ -85,9 +88,9 @@ class WhatsAppController {
                   
                   console.log('[WhatsApp] 🧠 Processing audio with Gemini...');
                   const mimeType = message.audio.mime_type || 'audio/ogg';
-                  aiResponse = await AIService.generateResponseFromAudio(audioBuffer, mimeType);
+                  aiResponse = await AIService.generateResponseFromAudio(from, audioBuffer, mimeType);
                   
-                  console.log('[WhatsApp] 🎙️ Generating Voice Note with OpenAI TTS...');
+                  console.log('[WhatsApp] 🎙️ Generating Voice Note con OpenAI TTS...');
                   try {
                     const ttsBuffer = await TTSService.generateAudio(aiResponse);
                     const newMediaId = await WhatsAppService.uploadMedia(ttsBuffer, 'audio/mpeg');
@@ -103,7 +106,7 @@ class WhatsAppController {
                   }
                 } else {
                   // Flujo normal de texto
-                  aiResponse = await AIService.generateResponse(text);
+                  aiResponse = await AIService.generateResponse(from, text);
                   await WhatsAppService.sendInteractiveButtons(from, aiResponse, [
                     { id: 'btn_cotizar', title: 'Cotizar Servicio' },
                     { id: 'btn_servicios', title: 'Ver Servicios' },

@@ -1,21 +1,27 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import OpenAI from 'openai';
+import { toFile } from 'openai/uploads';
 
 /**
- * AI Service using Google Gemini
- * Handles generating responses for customer inquiries.
+ * AI Service using OpenAI GPT-4o-mini
+ * Handles generating responses and transcribing audio.
  */
 class AIService {
-  private static _model: any = null;
+  private static _openai: OpenAI | null = null;
+  
+  // Memoria in-memory (role: 'user' | 'assistant', content: string)
+  private static chatHistory = new Map<string, any[]>();
 
-  private static getModel() {
-    if (!this._model) {
-      const apiKey = process.env.GEMINI_API_KEY || '';
-      if (!apiKey) throw new Error('GEMINI_API_KEY no está configurada');
-      
-      const genAI = new GoogleGenerativeAI(apiKey);
-      this._model = genAI.getGenerativeModel({
-        model: 'gemini-2.5-flash-lite',
-        systemInstruction: `
+  private static getClient(): OpenAI {
+    if (!this._openai) {
+      const apiKey = process.env.OPENAI_API_KEY || '';
+      if (!apiKey) throw new Error('OPENAI_API_KEY no está configurada');
+      this._openai = new OpenAI({ apiKey });
+    }
+    return this._openai;
+  }
+
+  private static getSystemPrompt(): string {
+    return `
       Tu nombre es "ZENIT Bot", el asesor inteligente de ZENIT SOLUTIONS, una empresa líder en limpieza al vapor profesional en Bogotá, Colombia.
       
       Tus objetivos son:
@@ -31,56 +37,94 @@ class AIService {
       REGLAS DE ORO PARA TUS RESPUESTAS:
       - Sé EXTREMADAMENTE BREVE y directo al grano.
       - Tus respuestas NUNCA deben superar las 2 o 3 oraciones cortas.
-      - Estás enviando notas de voz de WhatsApp: deben durar máximo 10 a 15 segundos.
-      - Usa emojis elegantes. Mantén el tono de un asesor premium de alto nivel, pero sin rodeos.
-    `,
-      });
-    }
-    return this._model;
+      - Estás enviando notas de voz de WhatsApp: deben durar máximo 10 a 15 segundos hablados.
+      - Usa emojis elegantes. Mantén el tono de un asesor premium.
+      - CRÍTICO: Revisa el historial de la conversación. Si el cliente YA te proporcionó sus datos personales (nombre, teléfono, email) en un mensaje o audio anterior, NO se los vuelvas a pedir. Procede a darle la cotización o confirmar que un asesor lo contactará.
+    `;
   }
 
   /**
-   * Generate an AI response for a given prompt
+   * Generate an AI response for a given text prompt
    */
-  static async generateResponse(prompt: string): Promise<string> {
+  static async generateResponse(from: string, prompt: string): Promise<string> {
     try {
-      if (!process.env.GEMINI_API_KEY) {
+      if (!process.env.OPENAI_API_KEY) {
         return 'Lo siento, mi servicio de inteligencia no está configurado. Por favor contacta a un asesor humano.';
       }
 
-      const result = await this.getModel().generateContent(prompt);
-      const response = await result.response;
-      return response.text();
+      const openai = this.getClient();
+
+      // 1. Recuperar historial del usuario
+      let history = this.chatHistory.get(from) || [];
+      
+      // 2. Agregar el mensaje actual del usuario al historial
+      history.push({ role: 'user', content: prompt });
+
+      // 3. Limitar a los últimos 10 mensajes
+      if (history.length > 10) {
+        history = history.slice(history.length - 10);
+      }
+
+      // 4. Construir el array de mensajes para OpenAI
+      const messages = [
+        { role: 'system', content: this.getSystemPrompt() },
+        ...history
+      ];
+
+      // 5. Llamar a GPT-4o-mini
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: messages as any,
+        temperature: 0.7,
+        max_tokens: 150, // Forzar respuestas cortas
+      });
+
+      const responseText = completion.choices[0]?.message?.content || 'Lo siento, no pude generar una respuesta.';
+
+      // 6. Guardar la respuesta del bot en el historial
+      history.push({ role: 'assistant', content: responseText });
+      this.chatHistory.set(from, history);
+
+      return responseText;
     } catch (error: any) {
       console.error('[AIService] ❌ Error generating content:', error.message);
       return 'Lo siento, tuve un pequeño problema procesando tu mensaje. ¿Podrías repetirlo?';
     }
   }
+
   /**
-   * Generate an AI response from an audio file (Voice Note)
+   * Generate an AI response from an audio file (Voice Note) via Whisper + GPT-4o-mini
    */
-  static async generateResponseFromAudio(audioBuffer: Buffer, mimeType: string): Promise<string> {
+  static async generateResponseFromAudio(from: string, audioBuffer: Buffer, mimeType: string): Promise<string> {
     try {
-      if (!process.env.GEMINI_API_KEY) {
+      if (!process.env.OPENAI_API_KEY) {
         return 'Lo siento, mi servicio de inteligencia no está configurado.';
       }
 
-      const base64Audio = audioBuffer.toString('base64');
-
-      const result = await this.getModel().generateContent([
-        {
-          inlineData: {
-            mimeType: mimeType,
-            data: base64Audio
-          }
-        },
-        { text: "Responde a este mensaje de voz de forma natural, pero SÚPER BREVE (máximo 2 oraciones cortas). Imagina que estás enviando una nota de voz rápida de 10 segundos por WhatsApp. Ve directo al grano." }
-      ]);
+      const openai = this.getClient();
       
-      const response = await result.response;
-      return response.text();
+      // 1. Convertir el buffer a un archivo compatible con OpenAI (usando su utilidad toFile)
+      // MimeType viene de WhatsApp, usualmente es audio/ogg
+      const fileExtension = mimeType.includes('ogg') ? 'ogg' : 'mp3';
+      const file = await toFile(audioBuffer, `audio.${fileExtension}`, { type: mimeType });
+
+      console.log('[AIService] 🎙️ Transcribiendo audio con Whisper...');
+      // 2. Transcribir el audio usando Whisper
+      const transcription = await openai.audio.transcriptions.create({
+        file: file,
+        model: 'whisper-1',
+        language: 'es' // Forzar español para mayor precisión
+      });
+
+      const userText = transcription.text;
+      console.log(`[AIService] 📝 Transcripción: "${userText}"`);
+
+      // 3. Ya tenemos el texto, lo pasamos por el flujo normal de chat para que se guarde en la memoria y genere respuesta
+      const promptInfo = `[Nota de voz transcrita]: ${userText}`;
+      return await this.generateResponse(from, promptInfo);
+
     } catch (error: any) {
-      console.error('[AIService] ❌ Error generating content from audio:', error.message);
+      console.error('[AIService] ❌ Error processing audio:', error.message);
       return 'Lo siento, tuve un problema escuchando tu nota de voz. ¿Podrías escribirlo o intentarlo de nuevo?';
     }
   }

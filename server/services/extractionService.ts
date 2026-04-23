@@ -1,21 +1,23 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import OpenAI from 'openai';
 
 /**
  * Extraction Service
- * Uses Gemini to extract structured contact information from raw chat messages.
+ * Uses OpenAI GPT-4o-mini to extract structured contact information from raw chat messages.
  */
 class ExtractionService {
-  private static _model: any = null;
+  private static _openai: OpenAI | null = null;
 
-  private static getModel() {
-    if (!this._model) {
-      const apiKey = process.env.GEMINI_API_KEY || '';
-      if (!apiKey) throw new Error('GEMINI_API_KEY no está configurada');
-      
-      const genAI = new GoogleGenerativeAI(apiKey);
-      this._model = genAI.getGenerativeModel({ 
-        model: 'gemini-2.5-flash-lite',
-        systemInstruction: `
+  private static getClient(): OpenAI {
+    if (!this._openai) {
+      const apiKey = process.env.OPENAI_API_KEY || '';
+      if (!apiKey) throw new Error('OPENAI_API_KEY no está configurada');
+      this._openai = new OpenAI({ apiKey });
+    }
+    return this._openai;
+  }
+
+  private static getSystemPrompt(): string {
+    return `
       Eres un extractor de datos ultra-preciso. Tu única tarea es leer mensajes de chat y extraer información de contacto en formato JSON.
       
       Si encuentras estos campos, extráelos:
@@ -29,11 +31,7 @@ class ExtractionService {
       - Responde UNICAMENTE con el objeto JSON. 
       - Si no encuentras un campo, ponlo como null.
       - No agregues explicaciones ni texto adicional.
-      - Ejemplo de salida: {"name": "Juan", "email": "juan@mail.com", "phone": "123", "service": "Limpieza", "message": "Detalles"}
-    `,
-      });
-    }
-    return this._model;
+    `;
   }
 
   /**
@@ -41,18 +39,23 @@ class ExtractionService {
    */
   static async extractInfo(text: string) {
     try {
-      if (!process.env.GEMINI_API_KEY) return null;
+      if (!process.env.OPENAI_API_KEY) return null;
 
-      const result = await this.getModel().generateContent(text);
-      const response = await result.response;
-      let jsonText = response.text().replace(/```json|```/g, '').trim();
-      
-      // Intentar extraer solo el bloque JSON si hay texto adicional
-      const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        jsonText = jsonMatch[0];
-      }
-      
+      const openai = this.getClient();
+
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: this.getSystemPrompt() },
+          { role: 'user', content: text }
+        ],
+        response_format: { type: 'json_object' }, // Forzar salida en JSON
+        temperature: 0.1, // Baja temperatura para mayor precisión
+      });
+
+      const jsonText = completion.choices[0]?.message?.content;
+      if (!jsonText) return null;
+
       return JSON.parse(jsonText);
     } catch (error) {
       console.error('[ExtractionService] ❌ Error extracting info:', error);
