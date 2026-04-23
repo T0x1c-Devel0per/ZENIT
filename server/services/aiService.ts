@@ -105,7 +105,7 @@ class AIService {
   static async generateResponseFromAudio(from: string, audioBuffer: Buffer, mimeType: string): Promise<{ response: string; transcription: string }> {
     try {
       if (!process.env.OPENAI_API_KEY) {
-        return 'Lo siento, mi servicio de inteligencia no está configurado.';
+        return { response: 'Lo siento, mi servicio de inteligencia no está configurado.', transcription: '' };
       }
 
       const openai = this.getClient();
