@@ -86,7 +86,7 @@ class WhatsAppController {
                   console.log('[WhatsApp] ⏳ Downloading audio from Meta...');
                   const audioBuffer = await WhatsAppService.downloadMedia(mediaId);
                   
-                  console.log('[WhatsApp] 🧠 Processing audio with Gemini...');
+                  console.log('[WhatsApp] 🧠 Processing audio with Whisper & GPT-4o-mini...');
                   const mimeType = message.audio.mime_type || 'audio/ogg';
                   aiResponse = await AIService.generateResponseFromAudio(from, audioBuffer, mimeType);
                   
@@ -157,6 +157,20 @@ class WhatsAppController {
               }
             })();
 
+            return;
+          } else if (type === 'unsupported' || type === 'system' || type === 'unknown') {
+            console.log(`[WhatsApp] 📞 Unsupported message or call received from ${from}`);
+            res.status(200).send('EVENT_RECEIVED');
+            
+            // Responder indicando que no se aceptan llamadas
+            (async () => {
+              try {
+                const fallbackMessage = "¡Hola! 👋 Soy el asistente virtual de ZENIT. Mi línea no está habilitada para recibir llamadas de voz o video. Por favor, escríbeme tu consulta por texto o envíame una nota de voz y te atenderé de inmediato.";
+                await WhatsAppService.sendMessage(from, fallbackMessage);
+              } catch (err: any) {
+                console.error('[WhatsAppController] ❌ Error sending call fallback:', err.message);
+              }
+            })();
             return;
           }
         }

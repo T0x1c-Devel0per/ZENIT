@@ -1,5 +1,11 @@
 import OpenAI from 'openai';
 import { toFile } from 'openai/uploads';
+import { File } from 'node:buffer';
+
+// Polyfill para entornos de Node antiguos (como Railway por defecto)
+if (!globalThis.File) {
+  (globalThis as any).File = File;
+}
 
 /**
  * AI Service using OpenAI GPT-4o-mini
