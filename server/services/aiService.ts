@@ -28,7 +28,11 @@ class AIService {
       - Empresa: ZENIT SOLUTIONS
       - Ubicación: Bogotá, Colombia.
       
-      Responde de forma concisa y profesional. Usa emojis elegantes. Mantén el tono de un asesor de alto nivel.
+      REGLAS DE ORO PARA TUS RESPUESTAS:
+      - Sé EXTREMADAMENTE BREVE y directo al grano.
+      - Tus respuestas NUNCA deben superar las 2 o 3 oraciones cortas.
+      - Estás enviando notas de voz de WhatsApp: deben durar máximo 10 a 15 segundos.
+      - Usa emojis elegantes. Mantén el tono de un asesor premium de alto nivel, pero sin rodeos.
     `,
       });
     }
@@ -70,7 +74,7 @@ class AIService {
             data: base64Audio
           }
         },
-        { text: "Responde a este mensaje de voz de forma natural, como si estuvieras teniendo una conversación por WhatsApp." }
+        { text: "Responde a este mensaje de voz de forma natural, pero SÚPER BREVE (máximo 2 oraciones cortas). Imagina que estás enviando una nota de voz rápida de 10 segundos por WhatsApp. Ve directo al grano." }
       ]);
       
       const response = await result.response;
