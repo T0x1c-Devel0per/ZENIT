@@ -2,6 +2,7 @@ import { Section } from '../../components/Section/Section.js';
 import { Card } from '../../components/Card/Card.js';
 import { Rating } from '../../components/Rating/Rating.js';
 import { Icon } from '../../components/Icon/Icon.js';
+import { ScrollParticles } from '../../components/ScrollParticles/ScrollParticles.js';
 import { useInView } from '../../hooks/index.js';
 import { getFeaturedTestimonials, getAverageRating } from '../../controllers/index.js';
 import './Testimonials.css';
@@ -13,7 +14,13 @@ export function Testimonials() {
 
   return (
     <Section id="testimonios" variant="alternate" padding="lg">
-      <div className="container">
+      <ScrollParticles
+        particles={[
+          { side: 'right', top: '5%',  size: 240, speed: 0.5, color: 'secondary', opacity: 0.22 },
+          { side: 'left',  top: '55%', size: 180, speed: 0.3, color: 'accent', opacity: 0.15 },
+        ]}
+      />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div className="section-header">
           <span className="section-tag">Testimonios</span>
           <h2 className="section-title">

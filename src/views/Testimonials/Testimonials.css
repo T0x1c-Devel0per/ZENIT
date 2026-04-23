@@ -13,6 +13,11 @@
   box-shadow: var(--shadow-md);
 }
 
+html.dark .testimonials-rating__score {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
 .testimonials-rating__number {
   font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-bold);
@@ -20,22 +25,33 @@
   line-height: 1;
 }
 
+html.dark .testimonials-rating__number {
+  color: #38bdf8 !important;
+}
+
 .testimonials-rating__text {
   font-size: var(--font-size-sm);
   color: var(--color-gray-500);
 }
 
+html.dark .testimonials-rating__text {
+  color: #94a3b8 !important;
+}
+
+/* ---- Grid ---- */
 .testimonials-grid {
   display: grid;
   gap: var(--spacing-8);
 }
 
+/* ---- Card ---- */
 .testimonial-card {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-4);
   padding: var(--spacing-8);
   position: relative;
+  min-height: 280px;
 }
 
 .testimonial-card__quote-icon {
@@ -43,6 +59,11 @@
   top: var(--spacing-6);
   right: var(--spacing-6);
   color: var(--color-primary-100);
+  opacity: 0.5;
+}
+
+html.dark .testimonial-card__quote-icon {
+  color: rgba(56, 189, 248, 0.15) !important;
 }
 
 .testimonial-card__rating {
@@ -57,6 +78,10 @@
   flex-grow: 1;
 }
 
+html.dark .testimonial-card__content {
+  color: #cbd5e1 !important;
+}
+
 .testimonial-card__author {
   display: flex;
   align-items: center;
@@ -65,12 +90,17 @@
   border-top: 1px solid var(--color-gray-100);
 }
 
+html.dark .testimonial-card__author {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
 .testimonial-card__avatar {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 48px;
   height: 48px;
+  min-width: 48px;
   border-radius: var(--radius-full);
   background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
   color: var(--color-white);
@@ -90,9 +120,17 @@
   color: var(--color-gray-900);
 }
 
+html.dark .testimonial-card__name {
+  color: #ffffff !important;
+}
+
 .testimonial-card__role {
   font-size: var(--font-size-sm);
   color: var(--color-gray-500);
+}
+
+html.dark .testimonial-card__role {
+  color: #94a3b8 !important;
 }
 
 /* Desktop */

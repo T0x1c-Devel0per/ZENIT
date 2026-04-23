@@ -1,21 +1,28 @@
 import { Section } from '../../components/Section/Section.js';
 import { Card } from '../../components/Card/Card.js';
 import { Icon } from '../../components/Icon/Icon.js';
+import { ScrollParticles } from '../../components/ScrollParticles/ScrollParticles.js';
 import { values } from '../../models/data.js';
 import './About.css';
 
 const companyInfo = {
   mission: 'Proporcionar servicios de limpieza excepcionales que transformen espacios y superen las expectativas de nuestros clientes, utilizando métodos ecológicos y personal altamente capacitado.',
-  vision: 'Ser la empresa líder en servicios de limpieza en México, reconocida por nuestra calidad, innovación y compromiso con la sostenibilidad ambiental.',
+  vision: 'Ser la empresa líder en servicios de limpieza en Colombia, reconocida por nuestra calidad, innovación y compromiso con la sostenibilidad ambiental.',
 };
 
 export function About() {
   return (
     <Section id="nosotros" variant="default" padding="lg">
-      <div className="container">
+      <ScrollParticles
+        particles={[
+          { side: 'left',  top: '20%', size: 300, speed: 0.4, color: 'primary', opacity: 0.15 },
+          { side: 'right', top: '65%', size: 200, speed: 0.6, color: 'secondary', opacity: 0.18 },
+        ]}
+      />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div className="about-grid">
           <div className="about-content">
-            <span className="section-tag">Sobre SteamClean</span>
+            <span className="section-tag">Sobre SENIT SOLUTIONS</span>
             <h2 className="section-title">
               Más que limpieza, creamos{' '}
               <span className="text-primary">experiencias</span>

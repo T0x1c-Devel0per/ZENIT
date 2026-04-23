@@ -1,44 +1,57 @@
 .section {
   width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .section--padding-sm {
-  padding: var(--spacing-12) 0;
-}
-
-.section--padding-md {
   padding: var(--spacing-16) 0;
 }
 
-.section--padding-lg {
+.section--padding-md {
   padding: var(--spacing-20) 0;
+}
+
+.section--padding-lg {
+  padding: var(--spacing-24) 0;
 }
 
 @media (min-width: 768px) {
   .section--padding-sm {
-    padding: var(--spacing-16) 0;
-  }
-
-  .section--padding-md {
     padding: var(--spacing-20) 0;
   }
 
-  .section--padding-lg {
+  .section--padding-md {
     padding: var(--spacing-24) 0;
+  }
+
+  .section--padding-lg {
+    padding: var(--spacing-32) 0;
   }
 }
 
+/* Transparent so the Three.js background bleeds through */
 .section--default {
-  background: var(--color-white);
+  background: transparent;
 }
 
 .section--alternate {
-  background: linear-gradient(180deg, var(--color-gray-50), var(--color-white));
+  background: rgba(248, 250, 252, 0.5);
+  /* Removed backdrop-filter: blur(1px) — negligible visual effect
+     but creates compositing layer that degrades text anti-aliasing */
+}
+
+html.dark .section--alternate {
+  background: rgba(15, 23, 42, 0.3);
 }
 
 .section--dark {
   background: var(--color-gray-900);
   color: var(--color-white);
+}
+
+html.dark .section--dark {
+  background: #020617;
 }
 
 .section--dark h1,

@@ -17,7 +17,7 @@ const AdminNav: React.FC = () => {
   return (
     <nav className={`p-4 ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} shadow-md`}>
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold">SteamClean</Link>
+        <Link to="/" className="text-xl font-bold">SENIT SOLUTIONS</Link>
         <div className="flex items-center space-x-4">
           <ThemeToggle />
           {!token ? (

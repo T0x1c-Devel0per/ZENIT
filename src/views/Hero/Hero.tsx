@@ -1,6 +1,7 @@
 import { motion, type Variants } from 'framer-motion';
 import { Button } from '../../components/Button/Button.js';
 import { Icon } from '../../components/Icon/Icon.js';
+import { HeroShapes } from './HeroShapes.js';
 import './Hero.css';
 
 export function Hero() {
@@ -10,6 +11,10 @@ export function Hero() {
       opacity: 1,
       transition: {
         staggerChildren: 0.2
+      },
+      transitionEnd: {
+        transform: "none",
+        WebkitTransform: "none"
       }
     }
   };
@@ -22,6 +27,10 @@ export function Hero() {
       transition: {
         duration: 0.5,
         ease: "easeOut"
+      },
+      transitionEnd: {
+        transform: "none",
+        WebkitTransform: "none"
       }
     }
   };
@@ -35,53 +44,17 @@ export function Hero() {
         duration: 0.5,
         ease: "easeOut",
         staggerChildren: 0.2
+      },
+      transitionEnd: {
+        transform: "none",
+        WebkitTransform: "none"
       }
     }
   };
 
   return (
     <section id="inicio" className="hero">
-      <div className="hero__bg" aria-hidden="true">
-        <motion.div
-          className="hero__shape hero__shape--1"
-          animate={{
-            y: [0, -10, 0],
-            rotate: [0, 5, 0]
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="hero__shape hero__shape--2"
-          animate={{
-            x: [0, 10, 0],
-            rotate: [0, -5, 0]
-          }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="hero__shape hero__shape--3"
-          animate={{
-            y: [0, 15, 0],
-            x: [0, -5, 0]
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut"
-          }}
-        />
-      </div>
+      <HeroShapes />
 
       <div className="container hero__container">
         <motion.div
@@ -110,7 +83,7 @@ export function Hero() {
             className="hero__description"
             variants={itemVariants}
           >
-            En SteamClean transformamos tus espacios con servicios de limpieza
+            En SENIT SOLUTIONS transformamos tus espacios con servicios de limpieza
             profesionales, ecológicos y personalizados. Resultados impecables
             que superan tus expectativas.
           </motion.p>
@@ -178,8 +151,11 @@ export function Hero() {
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
             <div className="hero__image-placeholder">
-              <Icon name="sparkles" size="xl" />
-              <span>Espacios Impecables</span>
+              <img
+                src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=80"
+                alt="Servicio profesional de limpieza SENIT SOLUTIONS"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-xl)' }}
+              />
             </div>
           </motion.div>
 

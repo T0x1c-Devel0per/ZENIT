@@ -16,9 +16,9 @@ html.dark .background-canvas-container {
 
 /* Glassmorphism utility for other components to use */
 .glass-effect {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
+  /* Removed backdrop-filter: blur(10px) — replaced with more opaque
+     background to eliminate GPU compositing layer causing text aliasing */
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 

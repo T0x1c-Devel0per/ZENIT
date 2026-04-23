@@ -62,7 +62,7 @@ export const testimonials: Testimonial[] = [
     id: '1',
     name: 'María González',
     role: 'Cliente Residencial',
-    content: 'El servicio de SteamClean transformó completamente mi hogar. El equipo es profesional, puntual y detallista. ¡Los recomiendo al 100%!',
+    content: 'El servicio de SENIT SOLUTIONS transformó completamente mi hogar. El equipo es profesional, puntual y detallista. ¡Los recomiendo al 100%!',
     rating: 5,
   },
   {
@@ -76,7 +76,7 @@ export const testimonials: Testimonial[] = [
     id: '3',
     name: 'Ana Martínez',
     role: 'Cliente Post-Construcción',
-    content: 'Después de la remodelación de mi casa, SteamClean dejó todo perfecto. Quitaron hasta el polvo más fino. Excelente relación calidad-precio.',
+    content: 'Después de la remodelación de mi casa, SENIT SOLUTIONS dejó todo perfecto. Quitaron hasta el polvo más fino. Excelente relación calidad-precio.',
     rating: 5,
   },
 ];
@@ -88,22 +88,22 @@ export const galleryItems: GalleryItem[] = [
   {
     id: '1',
     title: 'Oficina Corporativa',
-    beforeImage: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=400&q=80',
-    afterImage: 'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=400&q=80',
+    beforeImage: '/gallery/office-dirty.png',
+    afterImage: '/gallery/office-clean.png',
     description: 'Limpieza profunda de oficina de 500m²',
   },
   {
     id: '2',
     title: 'Residencia Familiar',
-    beforeImage: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=400&q=80',
-    afterImage: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=400&q=80',
+    beforeImage: '/gallery/home-dirty.png',
+    afterImage: '/gallery/home-clean.png',
     description: 'Limpieza general post-evento familiar',
   },
   {
     id: '3',
     title: 'Local Comercial',
-    beforeImage: 'https://images.unsplash.com/photo-1515785182275-62a2ab89a2f2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=400&q=80',
-    afterImage: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=400&q=80',
+    beforeImage: '/gallery/store-dirty.png',
+    afterImage: '/gallery/store-clean.png',
     description: 'Limpieza de local comercial antes de apertura',
   },
 ];

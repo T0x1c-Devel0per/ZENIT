@@ -17,6 +17,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Light theme (default) */
@@ -37,6 +38,11 @@ body {
   font-weight: var(--font-weight-normal);
   line-height: var(--line-height-normal);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1;
+  font-kerning: normal;
 }
 
 /* ===== ENLACES ===== */
@@ -106,7 +112,20 @@ html.dark h3,
 html.dark h4,
 html.dark h5,
 html.dark h6 {
-  color: var(--color-gray-100);
+  color: #ffffff !important;
+}
+
+html.dark p, 
+html.dark span:not(.hero__title-highlight):not(.section-tag) {
+  color: #cbd5e1 !important; /* Gris claro para lectura */
+}
+
+html.dark .section-title {
+  color: #ffffff !important;
+}
+
+html.dark .section-description {
+  color: #94a3b8 !important;
 }
 
 h1,
@@ -115,6 +134,7 @@ h3,
 h4,
 h5,
 h6 {
+  font-family: var(--font-family-heading);
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-tight);
 }
@@ -146,14 +166,20 @@ h6 {
 /* ===== UTILIDADES ===== */
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 var(--spacing-4);
+  padding: 0 var(--spacing-6);
 }
 
 @media (min-width: 768px) {
   .container {
-    padding: 0 var(--spacing-8);
+    padding: 0 var(--spacing-12);
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    padding: 0 var(--spacing-16);
   }
 }
 
@@ -223,6 +249,7 @@ h6 {
   -webkit-backdrop-filter: blur(12px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: var(--shadow-lg);
+  isolation: isolate; /* Contains compositing to prevent text aliasing */
 }
 
 html.dark .glass-panel {

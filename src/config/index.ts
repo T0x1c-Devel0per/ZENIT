@@ -1,34 +1,29 @@
-/**
- * Configuración de la aplicación
- */
-
 export const config = {
   app: {
-    name: 'SteamClean',
-    tagline: 'Limpieza al Vapor Profesional, Resultados Impecables',
-    description: 'Servicio profesional de limpieza al vapor residencial y comercial con los más altos estándares de calidad.',
+    name: 'SENIT SOLUTIONS',
+    tagline: 'Excelencia en Limpieza y Desinfección Profesional',
+    description: 'Servicios profesionales de limpieza y desinfección al vapor en Bogotá.',
   },
 
   contact: {
-    email: 'contacto@steamclean.com.co',
-    phone: '+57 312 345 6789',
+    email: 'nelsonenriquesa18@gmail.com',
+    phone: '3229250658',
     address: 'Bogotá, Colombia',
   },
 
   social: {
-    facebook: 'https://facebook.com/steamclean',
-    instagram: 'https://instagram.com/steamclean',
-    twitter: 'https://twitter.com/steamclean',
-    linkedin: 'https://linkedin.com/company/steamclean',
+    facebook: 'https://facebook.com/senitsolutions',
+    instagram: 'https://instagram.com/senitsolutions',
+    twitter: 'https://twitter.com/senitsolutions',
+    linkedin: 'https://linkedin.com/company/senitsolutions',
   },
 
   business: {
     hours: {
-      weekdays: 'Lunes - Viernes: 8:00 AM - 6:00 PM',
-      saturday: 'Sábado: 9:00 AM - 2:00 PM',
-      sunday: 'Domingo: Cerrado',
+      weekdays: 'Lunes a Viernes: 8:00 AM - 6:00 PM',
+      saturday: 'Sábados: 8:00 AM - 2:00 PM',
+      sunday: 'Domingos: Cerrado',
     },
-  },
-} as const;
-
-export type Config = typeof config;
+    location: 'Bogotá, Colombia',
+  }
+};

@@ -6,6 +6,7 @@ import { Textarea } from '../../components/Textarea/Textarea.js';
 import { Select } from '../../components/Select/Select.js';
 import { Button } from '../../components/Button/Button.js';
 import { Icon } from '../../components/Icon/Icon.js';
+import { ScrollParticles } from '../../components/ScrollParticles/ScrollParticles.js';
 import { validateContactForm, submitContactForm, isFormValid } from '../../controllers/index.js';
 import { getServiceNames } from '../../controllers/index.js';
 import type { ContactForm as ContactFormType } from '../../models/types.js';
@@ -67,7 +68,13 @@ export function Contact() {
 
   return (
     <Section id="contacto" variant="dark" padding="lg">
-      <div className="container">
+      <ScrollParticles
+        particles={[
+          { side: 'left',  top: '10%', size: 250, speed: 0.3, color: 'primary', opacity: 0.1 },
+          { side: 'right', top: '50%', size: 200, speed: 0.5, color: 'accent', opacity: 0.08 },
+        ]}
+      />
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
         <div className="contact-grid">
           <div className="contact-info">
             <span className="section-tag section-tag--light">Contacto</span>
@@ -80,15 +87,15 @@ export function Contact() {
             </p>
 
             <div className="contact-methods">
-              <a href="tel:+573123456789" className="contact-method">
+              <a href="tel:+573229250658" className="contact-method">
                 <Icon name="phone" size="lg" />
                 <span>Llámanos - Bogotá, Colombia</span>
-                <strong>+57 312 345 6789</strong>
+                <strong>+57 322 925 0658</strong>
               </a>
-              <a href="mailto:contacto@steamclean.com.co" className="contact-method">
+              <a href="mailto:nelsonenriquesa18@gmail.com" className="contact-method">
                 <Icon name="mail" size="lg" />
                 <span>Escríbenos</span>
-                <strong>contacto@steamclean.com.co</strong>
+                <strong>nelsonenriquesa18@gmail.com</strong>
               </a>
             </div>
           </div>

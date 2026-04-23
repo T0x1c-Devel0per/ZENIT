@@ -1,8 +1,18 @@
 .card {
-  background: var(--color-white);
+  background: rgba(255, 255, 255, 0.85);
+  /* Removed backdrop-filter: blur(12px) — replaced with more opaque
+     background to avoid GPU compositing that causes text aliasing */
   border-radius: var(--radius-xl);
-  border: 1px solid var(--color-gray-100);
-  transition: all var(--transition-normal);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  isolation: isolate;
+}
+
+html.dark .card {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
 .card--hover {
@@ -10,9 +20,14 @@
 }
 
 .card--hover:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-xl);
-  border-color: transparent;
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(14, 165, 233, 0.1), 0 8px 16px rgba(0, 0, 0, 0.06);
+  border-color: rgba(14, 165, 233, 0.2);
+}
+
+html.dark .card--hover:hover {
+  box-shadow: 0 20px 40px rgba(56, 189, 248, 0.08), 0 8px 16px rgba(0, 0, 0, 0.4);
+  border-color: rgba(56, 189, 248, 0.15);
 }
 
 .card--padding-none {

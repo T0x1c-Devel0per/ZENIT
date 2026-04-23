@@ -24,7 +24,8 @@ export function Footer() {
         <div className="footer__grid">
           {/* Logo y descripción */}
           <div className="footer__brand">
-            <span className="footer__logo">SteamClean</span>
+            <span className="footer__logo">SENIT SOLUTIONS</span>
+
             <p className="footer__description">{config.app.description}</p>
             <div className="footer__social">
               {socialLinks.map((social) => (

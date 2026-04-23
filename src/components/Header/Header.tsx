@@ -27,7 +27,7 @@ export function Header() {
     <header className={cn('header', isScrolled && 'header--scrolled')}>
       <div className="container header__container">
         <a href="#inicio" className="header__logo" onClick={closeMenu}>
-          <span className="header__logo-text">SteamClean</span>
+          <span className="header__logo-text">SENIT SOLUTIONS</span>
         </a>
 
         <nav className={cn('nav', isMenuOpen && 'nav--open')} aria-label="Navegación principal">
