@@ -1,5 +1,7 @@
+import OpenAI from 'openai';
+
 /**
- * Text-to-Speech Service using ElevenLabs
+ * Text-to-Speech Service using ElevenLabs and OpenAI
  * Provides ultra-realistic voices for a premium customer experience.
  */
 class TTSService {
@@ -8,7 +10,6 @@ class TTSService {
    */
   static async generateAudio(text: string): Promise<Buffer> {
     const apiKey = process.env.ELEVENLABS_API_KEY;
-    // Usamos la voz "Bella" (muy natural para español) por defecto, o la que esté en el .env
     const voiceId = process.env.ELEVENLABS_VOICE_ID || 'EXAVITQu4vr4xnSDxMaL'; 
     
     if (!apiKey) {
@@ -27,7 +28,7 @@ class TTSService {
         },
         body: JSON.stringify({
           text: text,
-          model_id: 'eleven_multilingual_v2', // El mejor modelo para español
+          model_id: 'eleven_multilingual_v2',
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
@@ -46,6 +47,31 @@ class TTSService {
       return Buffer.from(arrayBuffer);
     } catch (error: any) {
       console.error('[TTSService] ❌ Error generating audio with ElevenLabs:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Generates an audio buffer from text using OpenAI TTS
+   */
+  static async generateAudioOpenAI(text: string): Promise<Buffer> {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) throw new Error('OPENAI_API_KEY no está configurada.');
+
+    try {
+      console.log(`[TTSService] 🎙️ Generando audio con OpenAI TTS (Voz: nova)...`);
+      const openai = new OpenAI({ apiKey });
+      
+      const mp3 = await openai.audio.speech.create({
+        model: "tts-1",
+        voice: "nova", // Voz profesional y clara
+        input: text,
+      });
+
+      const buffer = Buffer.from(await mp3.arrayBuffer());
+      return buffer;
+    } catch (error: any) {
+      console.error('[TTSService] ❌ Error generating audio with OpenAI:', error.message);
       throw error;
     }
   }

@@ -125,30 +125,39 @@ class WhatsAppController {
                   AIService.initHistory(from); 
                 }
 
-                // Si es un audio, descargamos, pasamos a Whisper, y la respuesta la mandamos a TTS
+                // Si es un audio, descargamos, pasamos a Whisper, y la respuesta la mandamos a TTS de ElevenLabs
                 if (type === 'audio' && mediaId) {
-                  console.log('[WhatsApp] ⏳ Downloading audio from YCloud...');
+                  console.log('[WhatsApp] ⏳ Downloading audio from YCloud/Meta...');
                   const audioBuffer = await WhatsAppService.downloadMedia(mediaId);
                   
                   console.log('[WhatsApp] 🧠 Processing audio with Whisper & GPT-4o-mini...');
                   const mimeType = messageData.audio?.mime_type || 'audio/ogg';
                   const audioResult = await AIService.generateResponseFromAudio(from, audioBuffer, mimeType);
                   aiResponse = audioResult.response;
-                  text = audioResult.transcription; // Guardar transcripción para extraer datos
+                  text = audioResult.transcription;
                   
-                  console.log('[WhatsApp] 🎙️ Generating Voice Note con OpenAI TTS...');
+                  console.log('[WhatsApp] 🎙️ Generating Premium Voice Note (ElevenLabs)...');
                   try {
                     const ttsBuffer = await TTSService.generateAudio(aiResponse);
                     const newMediaId = await WhatsAppService.uploadMedia(ttsBuffer, 'audio/mpeg');
                     await WhatsAppService.sendAudio(from, newMediaId);
                   } catch (ttsErr: any) {
-                    console.error('[WhatsApp] ❌ Failed to generate/send TTS audio, falling back to text:', ttsErr.message);
+                    console.error('[WhatsApp] ❌ ElevenLabs TTS failed, falling back to text:', ttsErr.message);
                     await WhatsAppService.sendMessage(from, aiResponse);
                   }
                 } else {
-                  // Flujo normal de texto
+                  // Flujo de texto -> Responde con OpenAI TTS (para ahorrar créditos de ElevenLabs)
                   aiResponse = await AIService.generateResponse(from, text);
-                  await WhatsAppService.sendMessage(from, aiResponse);
+                  
+                  console.log('[WhatsApp] 🎙️ Generating Standard Voice Note (OpenAI TTS)...');
+                  try {
+                    const ttsBuffer = await TTSService.generateAudioOpenAI(aiResponse);
+                    const newMediaId = await WhatsAppService.uploadMedia(ttsBuffer, 'audio/mpeg');
+                    await WhatsAppService.sendAudio(from, newMediaId);
+                  } catch (ttsErr: any) {
+                    console.error('[WhatsApp] ❌ OpenAI TTS failed, falling back to text:', ttsErr.message);
+                    await WhatsAppService.sendMessage(from, aiResponse);
+                  }
                 }
                 
                 await WhatsAppService.markAsRead(messageId);
