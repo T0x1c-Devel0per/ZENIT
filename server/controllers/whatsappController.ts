@@ -99,7 +99,9 @@ class WhatsAppController {
               }
             } else if (type === 'audio') {
               mediaId = messageData.audio?.id;
+              const mediaUrl = messageData.audio?.link;
               console.log(`[WhatsApp] 🎤 Audio received. Media ID: ${mediaId}`);
+              (messageData as any).mediaUrl = mediaUrl; // Guardar para uso posterior
             }
 
             // Evitar procesar el mismo mensaje si YCloud reintenta el webhook
@@ -155,7 +157,7 @@ class WhatsAppController {
                 // Si es un audio, descargamos, pasamos a Whisper, y la respuesta la mandamos a TTS de ElevenLabs
                 if (type === 'audio' && mediaId) {
                   console.log('[WhatsApp] ⏳ Downloading audio from YCloud/Meta...');
-                  const audioBuffer = await WhatsAppService.downloadMedia(mediaId);
+                  const audioBuffer = await WhatsAppService.downloadMedia(mediaId, (messageData as any).mediaUrl);
                   
                   console.log('[WhatsApp] 🧠 Processing audio with Whisper & GPT-4o-mini...');
                   const mimeType = messageData.audio?.mime_type || 'audio/ogg';

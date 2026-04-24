@@ -192,23 +192,22 @@ class WhatsAppService {
   }
 
   /**
-   * Download a media file from WhatsApp via YCloud proxy
+   * Download a media file from WhatsApp via YCloud proxy or direct link
    */
-  static async downloadMedia(mediaId: string): Promise<Buffer> {
+  static async downloadMedia(mediaId: string, directUrl?: string): Promise<Buffer> {
     const apiKey = process.env.YCLOUD_API_KEY;
     if (!apiKey) throw new Error('YCloud API Key missing');
 
-    console.log(`[WhatsAppService] ⏳ Retrieving media ${mediaId} via YCloud...`);
+    const url = directUrl || `${this.BASE_URL}/whatsapp/media/${mediaId}`;
+    console.log(`[WhatsAppService] ⏳ Retrieving media from: ${url}`);
 
-    // Probar el endpoint de YCloud para descargar media directamente
-    const url = `${this.BASE_URL}/whatsapp/media/${mediaId}`;
     const response = await fetch(url, {
       headers: { 'X-API-Key': apiKey }
     });
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}) ) as any;
-      throw new Error(errorData.error?.message || `Failed to download media from YCloud (Status: ${response.status})`);
+      throw new Error(errorData.error?.message || `Failed to download media (Status: ${response.status})`);
     }
 
     const arrayBuffer = await response.arrayBuffer();
