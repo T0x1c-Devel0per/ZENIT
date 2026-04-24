@@ -10,6 +10,11 @@ import { sendContactNotification } from '../utils/email.js';
 /**
  * Controller for WhatsApp Webhooks and Sending
  */
+// Cache simple para evitar procesar el mismo mensaje dos veces (duplicados de webhooks)
+const processedMessages = new Set<string>();
+// Limpiar el cache cada hora para no saturar la memoria
+setInterval(() => processedMessages.clear(), 3600000);
+
 class WhatsAppController {
   
   /**
@@ -97,6 +102,13 @@ class WhatsAppController {
               console.log(`[WhatsApp] 🎤 Audio received. Media ID: ${mediaId}`);
             }
 
+            // Evitar procesar el mismo mensaje si YCloud reintenta el webhook
+            if (processedMessages.has(messageId)) {
+              console.log(`[WhatsApp] ♻️ Skipping duplicate message ID: ${messageId}`);
+              return res.status(200).send('EVENT_RECEIVED');
+            }
+            processedMessages.add(messageId);
+
             // ⚡ Respond 200 OK immediately
             res.status(200).send('EVENT_RECEIVED');
 
@@ -110,7 +122,10 @@ class WhatsAppController {
 
                 // 🎵 Bienvenida con Jingle pre-grabado (Solo la primera vez para ahorrar tokens)
                 const history = AIService.getChatHistory(from);
-                const isNewUser = !history || history.length === 0;
+                
+                // Verificar si es nuevo usuario tanto en memoria como en DB para evitar bucles tras reinicios
+                const contactInDb = await Contact.findOne({ phone: from });
+                const isNewUser = (!history || history.length === 0) && !contactInDb;
                 
                 if (isNewUser && process.env.WELCOME_AUDIO_MEDIA_ID) {
                   console.log(`[WhatsApp] 🎵 Sending welcome jingle to new user ${from}...`);
