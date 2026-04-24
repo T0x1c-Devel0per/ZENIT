@@ -38,6 +38,8 @@ class WhatsAppController {
   static async handleWebhook(req: Request, res: Response) {
     try {
       const body = req.body;
+      console.log(`[WhatsAppController] 📥 Webhook received! Body:`, JSON.stringify(body, null, 2));
+
       const signatureHeader = req.headers['ycloud-signature'] as string;
       const webhookSecret = process.env.YCLOUD_WEBHOOK_SECRET;
 
