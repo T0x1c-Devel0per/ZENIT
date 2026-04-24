@@ -40,7 +40,7 @@ class ExtractionService {
   static async extractInfo(text: string) {
     try {
       if (!process.env.OPENAI_API_KEY) return null;
-
+      if (!text || !text.trim()) return null;
       const openai = this.getClient();
 
       const completion = await openai.chat.completions.create({

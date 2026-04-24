@@ -71,6 +71,11 @@ class AIService {
         return 'Lo siento, mi servicio de inteligencia no está configurado. Por favor contacta a un asesor humano.';
       }
 
+      const trimmedPrompt = prompt.trim();
+      if (!trimmedPrompt) {
+        return '¿En qué puedo ayudarte hoy?';
+      }
+
       const openai = this.getClient();
 
       // 1. Recuperar historial del usuario
