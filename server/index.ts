@@ -26,7 +26,11 @@ app.use(helmet({
 }));
 app.use(compression());
 app.use(cors());
-app.use(express.json());
+app.use(express.json({
+  verify: (req: any, _res, buf) => {
+    req.rawBody = buf.toString();
+  }
+}));
 
 // API Routes
 app.use('/api/contact', contactRoutes);

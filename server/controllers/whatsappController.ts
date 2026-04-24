@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import crypto from 'crypto';
 import WhatsAppService from '../services/whatsappService.js';
 import AIService from '../services/aiService.js';
 import TTSService from '../services/ttsService.js';
@@ -12,7 +13,8 @@ import { sendContactNotification } from '../utils/email.js';
 class WhatsAppController {
   
   /**
-   * Webhook Verification (GET)
+   * Webhook Verification (GET) - Kept for legacy Meta compatibility or if YCloud sends challenge
+   * Note: YCloud usually verifies via POST and YCloud-Signature header.
    */
   static verifyWebhook(req: Request, res: Response) {
     const mode = req.query['hub.mode'];
@@ -25,7 +27,7 @@ class WhatsAppController {
       console.log('[WhatsAppController] ✅ Webhook verified successfully');
       return res.status(200).send(challenge);
     } else {
-      console.error('[WhatsAppController] ❌ Webhook verification failed');
+      console.log('[WhatsAppController] ℹ️ Webhook GET received, might not be required for YCloud');
       return res.status(403).send('Forbidden');
     }
   }
@@ -36,17 +38,40 @@ class WhatsAppController {
   static async handleWebhook(req: Request, res: Response) {
     try {
       const body = req.body;
+      const signatureHeader = req.headers['ycloud-signature'] as string;
+      const webhookSecret = process.env.YCLOUD_WEBHOOK_SECRET;
 
-      if (body.object === 'whatsapp_business_account') {
-        const entry = body.entry?.[0];
-        const changes = entry?.changes?.[0];
-        const value = changes?.value;
+      // Optional: Verify YCloud Signature if secret is configured
+      if (webhookSecret && signatureHeader) {
+        // signatureHeader format: t=timestamp,s=signature
+        const parts = signatureHeader.split(',');
+        let t = '';
+        let s = '';
+        for (const part of parts) {
+          if (part.startsWith('t=')) t = part.substring(2);
+          if (part.startsWith('s=')) s = part.substring(2);
+        }
 
-        if (value?.messages?.[0]) {
-          const message = value.messages[0];
-          const from = message.from; 
-          const messageId = message.id;
-          const type = message.type;
+        if (t && s) {
+          const rawBody = (req as any).rawBody || JSON.stringify(body);
+          const payloadToSign = `${t}.${rawBody}`;
+          const expectedSignature = crypto.createHmac('sha256', webhookSecret).update(payloadToSign).digest('hex');
+
+          if (expectedSignature !== s) {
+            console.error('[WhatsAppController] ❌ Webhook signature verification failed');
+            return res.status(401).send('Unauthorized');
+          }
+        }
+      }
+
+      // Check for YCloud webhook format
+      if (body.type && body.type.startsWith('whatsapp.inbound_message')) {
+        const messageData = body.whatsapp_inbound_message || body.data;
+
+        if (messageData) {
+          const from = messageData.from;
+          const messageId = messageData.id;
+          const type = messageData.type;
 
           console.log(`[WhatsApp] 📩 Message received from ${from} (Type: ${type})`);
 
@@ -55,18 +80,18 @@ class WhatsAppController {
             let mediaId = '';
             
             if (type === 'text') {
-              text = message.text.body;
+              text = messageData.text?.body || '';
               console.log(`[WhatsApp] Content: "${text}"`);
             } else if (type === 'interactive') {
-              if (message.interactive.type === 'button_reply') {
-                text = message.interactive.button_reply.title;
-                console.log(`[WhatsApp] 🔘 User clicked button: ${message.interactive.button_reply.id}`);
+              if (messageData.interactive?.type === 'button_reply') {
+                text = messageData.interactive.button_reply.title;
+                console.log(`[WhatsApp] 🔘 User clicked button: ${messageData.interactive.button_reply.id}`);
               } else {
                 res.status(200).send('EVENT_RECEIVED');
                 return;
               }
             } else if (type === 'audio') {
-              mediaId = message.audio.id;
+              mediaId = messageData.audio?.id;
               console.log(`[WhatsApp] 🎤 Audio received. Media ID: ${mediaId}`);
             }
 
@@ -96,11 +121,11 @@ class WhatsAppController {
 
                 // Si es un audio, descargamos, pasamos a Whisper, y la respuesta la mandamos a TTS
                 if (type === 'audio' && mediaId) {
-                  console.log('[WhatsApp] ⏳ Downloading audio from Meta...');
+                  console.log('[WhatsApp] ⏳ Downloading audio from YCloud...');
                   const audioBuffer = await WhatsAppService.downloadMedia(mediaId);
                   
                   console.log('[WhatsApp] 🧠 Processing audio with Whisper & GPT-4o-mini...');
-                  const mimeType = message.audio.mime_type || 'audio/ogg';
+                  const mimeType = messageData.audio?.mime_type || 'audio/ogg';
                   const audioResult = await AIService.generateResponseFromAudio(from, audioBuffer, mimeType);
                   aiResponse = audioResult.response;
                   text = audioResult.transcription; // Guardar transcripción para extraer datos
@@ -181,12 +206,10 @@ class WhatsAppController {
             return;
           }
         }
-
-        if (value?.statuses?.[0]) {
-          const status = value.statuses[0];
-          console.log(`[WhatsApp] 📊 Status update for ${status.id}: ${status.status}`);
-        }
-
+        return res.status(200).send('EVENT_RECEIVED');
+      } else if (body.object === 'whatsapp_business_account') {
+        // Fallback for Meta legacy webhook structure just in case
+        console.log(`[WhatsApp] ⚠️ Received Meta format webhook`);
         return res.status(200).send('EVENT_RECEIVED');
       } else {
         return res.status(404).send('NOT_WHATSAPP_EVENT');
