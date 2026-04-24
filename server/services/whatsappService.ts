@@ -16,7 +16,7 @@ class WhatsAppService {
       throw new Error('YCloud configuration missing: YCLOUD_WHATSAPP_NUMBER or YCLOUD_API_KEY');
     }
 
-    const url = `${this.BASE_URL}/whatsapp/messages/send`;
+    const url = `${this.BASE_URL}/whatsapp/messages/sendDirectly`;
 
     const payload = {
       from: from,
@@ -58,7 +58,7 @@ class WhatsAppService {
     const from = process.env.YCLOUD_WHATSAPP_NUMBER;
     const apiKey = process.env.YCLOUD_API_KEY;
 
-    const url = `${this.BASE_URL}/whatsapp/messages/send`;
+    const url = `${this.BASE_URL}/whatsapp/messages/sendDirectly`;
 
     const payload = {
       from: from,
@@ -107,7 +107,7 @@ class WhatsAppService {
       throw new Error('YCloud configuration missing');
     }
 
-    const url = `${this.BASE_URL}/whatsapp/messages/send`;
+    const url = `${this.BASE_URL}/whatsapp/messages/sendDirectly`;
 
     // Map buttons to YCloud interactive format
     const actionButtons = buttons.slice(0, 3).map(btn => ({
@@ -264,7 +264,7 @@ class WhatsAppService {
     const apiKey = process.env.YCLOUD_API_KEY;
     if (!from || !apiKey) throw new Error('YCloud config missing');
 
-    const url = `${this.BASE_URL}/whatsapp/messages/send`;
+    const url = `${this.BASE_URL}/whatsapp/messages/sendDirectly`;
 
     const payload = {
       from: from,
