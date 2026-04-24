@@ -68,11 +68,11 @@ class WhatsAppController {
 
       // Check for YCloud webhook format
       if (body.type && body.type.startsWith('whatsapp.inbound_message')) {
-        const messageData = body.whatsapp_inbound_message || body.data;
+        const messageData = body.whatsapp_inbound_message || body.whatsappInboundMessage || body.message || body.data || body;
 
-        if (messageData) {
+        if (messageData && messageData.from) {
           const from = messageData.from;
-          const messageId = messageData.id;
+          const messageId = messageData.id || 'unknown';
           const type = messageData.type;
 
           console.log(`[WhatsApp] 📩 Message received from ${from} (Type: ${type})`);
