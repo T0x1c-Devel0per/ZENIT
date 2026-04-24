@@ -207,7 +207,7 @@ class WhatsAppService {
     });
     
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorData = await response.json().catch(() => ({}) ) as any;
       throw new Error(errorData.error?.message || `Failed to download media from YCloud (Status: ${response.status})`);
     }
 
