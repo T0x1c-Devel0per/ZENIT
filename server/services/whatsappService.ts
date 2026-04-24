@@ -192,33 +192,34 @@ class WhatsAppService {
   }
 
   /**
-   * Download a media file from YCloud given its media ID
+   * Download a media file from WhatsApp given its media ID (Uses Meta Graph API as YCloud forwards media IDs)
    */
   static async downloadMedia(mediaId: string): Promise<Buffer> {
-    const apiKey = process.env.YCLOUD_API_KEY;
-    if (!apiKey) throw new Error('YCloud API Key missing');
+    const token = process.env.WHATSAPP_TOKEN;
+    if (!token) throw new Error('WhatsApp Token missing for media download');
 
-    // YCloud Media retrieval
-    // Usually GET /v2/whatsapp/media/{mediaId}
-    const urlReq = await fetch(`${this.BASE_URL}/whatsapp/media/${mediaId}`, {
-      headers: { 'X-API-Key': apiKey }
+    // 1. Get media URL from Meta Graph API
+    const urlReq = await fetch(`https://graph.facebook.com/v18.0/${mediaId}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
     });
     const urlData = await urlReq.json() as any;
     
     if (!urlReq.ok) {
-      throw new Error(urlData.error?.message || 'Failed to get media URL from YCloud');
+      throw new Error(urlData.error?.message || 'Failed to get media URL from Meta');
     }
 
-    const mediaUrl = urlData.url || urlData.link; // Adjust depending on exact YCloud response
+    const mediaUrl = urlData.url;
     if (!mediaUrl) {
-      throw new Error('YCloud response did not contain a media URL');
+      throw new Error('Meta response did not contain a media URL');
     }
 
     // 2. Download actual binary
-    const mediaReq = await fetch(mediaUrl); // YCloud media links might not need auth, or use same auth
+    const mediaReq = await fetch(mediaUrl, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
     
     if (!mediaReq.ok) {
-      throw new Error('Failed to download media binary');
+      throw new Error('Failed to download media binary from Meta');
     }
 
     const arrayBuffer = await mediaReq.arrayBuffer();
@@ -230,9 +231,10 @@ class WhatsAppService {
    */
   static async uploadMedia(buffer: Buffer, mimeType: string): Promise<string> {
     const apiKey = process.env.YCLOUD_API_KEY;
-    if (!apiKey) throw new Error('YCloud config missing');
+    const fromNumber = process.env.YCLOUD_WHATSAPP_NUMBER;
+    if (!apiKey || !fromNumber) throw new Error('YCloud config missing');
 
-    const url = `${this.BASE_URL}/whatsapp/media`;
+    const url = `${this.BASE_URL}/whatsapp/media/${fromNumber}/upload`;
 
     // Create a Blob from the buffer to append to FormData
     const blob = new Blob([new Uint8Array(buffer)], { type: mimeType });

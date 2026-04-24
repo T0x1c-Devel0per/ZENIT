@@ -114,7 +114,11 @@ class WhatsAppController {
                 
                 if (isNewUser && process.env.WELCOME_AUDIO_MEDIA_ID) {
                   console.log(`[WhatsApp] 🎵 Sending welcome jingle to new user ${from}...`);
-                  await WhatsAppService.sendAudio(from, process.env.WELCOME_AUDIO_MEDIA_ID);
+                  try {
+                    await WhatsAppService.sendAudio(from, process.env.WELCOME_AUDIO_MEDIA_ID);
+                  } catch (audioErr: any) {
+                    console.error('[WhatsApp] ⚠️ Welcome audio failed (probably invalid media ID):', audioErr.message);
+                  }
                   
                   // Inicializar historial inmediatamente para que el siguiente mensaje no dispare la canción
                   // (Incluso si la respuesta de la IA tarda un poco)
