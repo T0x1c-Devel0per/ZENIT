@@ -124,7 +124,7 @@ class WhatsAppController {
                 const history = AIService.getChatHistory(from);
                 
                 // Verificar si es nuevo usuario tanto en memoria como en DB para evitar bucles tras reinicios
-                const contactInDb = await Contact.findOne({ phone: from });
+                let contactInDb = await Contact.findOne({ phone: from });
                 const isNewUser = (!history || history.length === 0) && !contactInDb;
                 
                 if (isNewUser && process.env.WELCOME_AUDIO_MEDIA_ID) {
@@ -135,8 +135,20 @@ class WhatsAppController {
                     console.error('[WhatsApp] ⚠️ Welcome audio failed (probably invalid media ID):', audioErr.message);
                   }
                   
-                  // Inicializar historial inmediatamente para que el siguiente mensaje no dispare la canción
-                  // (Incluso si la respuesta de la IA tarda un poco)
+                  // Crear un contacto básico inmediatamente para evitar que se repita el jingle en el próximo mensaje
+                  try {
+                    contactInDb = new Contact({
+                      phone: from,
+                      name: 'Interesado',
+                      email: 'no-email@zenit.com',
+                      service: 'Pendiente',
+                      message: 'Primer contacto'
+                    });
+                    await contactInDb.save();
+                  } catch (e) {
+                    // Ignorar si falla el guardado inicial
+                  }
+
                   AIService.initHistory(from); 
                 }
 
