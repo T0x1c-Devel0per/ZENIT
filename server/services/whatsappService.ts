@@ -192,37 +192,26 @@ class WhatsAppService {
   }
 
   /**
-   * Download a media file from WhatsApp given its media ID (Uses Meta Graph API as YCloud forwards media IDs)
+   * Download a media file from WhatsApp via YCloud proxy
    */
   static async downloadMedia(mediaId: string): Promise<Buffer> {
-    const token = process.env.WHATSAPP_TOKEN;
-    if (!token) throw new Error('WhatsApp Token missing for media download');
+    const apiKey = process.env.YCLOUD_API_KEY;
+    if (!apiKey) throw new Error('YCloud API Key missing');
 
-    // 1. Get media URL from Meta Graph API
-    const urlReq = await fetch(`https://graph.facebook.com/v18.0/${mediaId}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const urlData = await urlReq.json() as any;
-    
-    if (!urlReq.ok) {
-      throw new Error(urlData.error?.message || 'Failed to get media URL from Meta');
-    }
+    console.log(`[WhatsAppService] ⏳ Retrieving media ${mediaId} via YCloud...`);
 
-    const mediaUrl = urlData.url;
-    if (!mediaUrl) {
-      throw new Error('Meta response did not contain a media URL');
-    }
-
-    // 2. Download actual binary
-    const mediaReq = await fetch(mediaUrl, {
-      headers: { 'Authorization': `Bearer ${token}` }
+    // Probar el endpoint de YCloud para descargar media directamente
+    const url = `${this.BASE_URL}/whatsapp/media/${mediaId}`;
+    const response = await fetch(url, {
+      headers: { 'X-API-Key': apiKey }
     });
     
-    if (!mediaReq.ok) {
-      throw new Error('Failed to download media binary from Meta');
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `Failed to download media from YCloud (Status: ${response.status})`);
     }
 
-    const arrayBuffer = await mediaReq.arrayBuffer();
+    const arrayBuffer = await response.arrayBuffer();
     return Buffer.from(arrayBuffer);
   }
 
