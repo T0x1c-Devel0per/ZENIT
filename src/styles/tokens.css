@@ -84,6 +84,8 @@
 
   /* Extra Colors */
   --color-white: #ffffff;
+  --color-error: #ef4444;
+  --color-success: #10b981;
   --color-accent-500: #f59e0b;
   --color-accent-600: #d97706;
 

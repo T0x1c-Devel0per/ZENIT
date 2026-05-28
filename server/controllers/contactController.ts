@@ -26,7 +26,7 @@ function validateContactData(data: ContactFormData): string[] {
   }
 
   if (data.phone) {
-    const phoneRegex = /^(\+52)?\s?\d{10}$/;
+    const phoneRegex = /^(\+57)?\s?(3\d{2})\s?\d{3}\s?\d{4}$|^(\+57)?\s?(3\d{2})\d{7}$/;
     if (!phoneRegex.test(data.phone.replace(/[\s-]/g, ''))) {
       errors.push('El teléfono no es válido');
     }
