@@ -24,6 +24,7 @@ connectDB();
 // Middleware
 app.use(helmet({
   contentSecurityPolicy: false, // Set to false if you have issues with R3F canvas or external assets
+  xFrameOptions: false, // Permitir que la página se incruste en un iframe
 }));
 app.use(compression());
 app.use(cors());
