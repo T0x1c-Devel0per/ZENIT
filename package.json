@@ -12,6 +12,7 @@
     "server:dev": "npx tsx watch server/index.ts",
     "server:build": "npx tsc -p server",
     "server": "node server/dist/index.js",
+    "agents:code": "npx tsx server/run-code-agents.ts",
     "dev:all": "concurrently \"npm run dev\" \"npm run server:dev\"",
     "test": "vitest",
     "test:ui": "vitest --ui",
@@ -22,6 +23,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@openai/agents": "^0.11.5",
     "@react-three/drei": "^9.121.5",
     "@react-three/fiber": "^8.17.14",
     "@types/compression": "^1.8.1",

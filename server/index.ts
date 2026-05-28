@@ -9,6 +9,7 @@ import contactRoutes from './routes/contactRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import whatsappRoutes from './routes/whatsappRoutes.js';
+import agentRoutes from './routes/agentRoutes.js';
 import connectDB from './config/db.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +38,24 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/whatsapp', whatsappRoutes);
+app.use('/api/agents', agentRoutes);
+
+// Health check
+app.get('/api/health', (_req: Request, res: Response) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.join(__dirname, '../../dist');
+  app.use(express.static(distPath));
+  
+  // Catch-all route to serve the frontend for any non-API route
+  app.get('*', (_req: Request, res: Response) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {
@@ -60,6 +79,6 @@ app.use((err: Error, _req: Request, res: Response, _next: express.NextFunction) 
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-app.listen(PORT, () => {
+app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });

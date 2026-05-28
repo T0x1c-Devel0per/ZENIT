@@ -19,8 +19,7 @@ RUN npm run build
 # Optional: Clean dev dependencies after build to keep the image small
 # RUN npm prune --production
 
-# Expose port 3000 to allow communication to/from the application
-EXPOSE 3000
+# We rely on Railway's PORT environment variable
 
 # Use the start script we configured in package.json
 CMD ["npm", "start"]
