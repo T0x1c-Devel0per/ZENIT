@@ -48,7 +48,7 @@
 
 .ba-slider__label--after {
   right: 12px;
-  background: rgba(14, 165, 233, 0.85);
+  background: var(--color-primary-600);
   color: #fff;
 }
 
@@ -87,24 +87,24 @@
   background: #ffffff;
   color: #0f172a;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  border: 2px solid rgba(14, 165, 233, 0.5);
+  border: 2px solid var(--color-primary-400);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ba-slider:active .ba-slider__handle-knob {
   transform: scale(1.15);
-  box-shadow: 0 4px 24px rgba(14, 165, 233, 0.5);
-  border-color: #0ea5e9;
+  box-shadow: 0 4px 24px var(--color-primary-300);
+  border-color: var(--color-primary-600);
 }
 
 html.dark .ba-slider__handle-knob {
   background: #1e293b;
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.5);
+  color: var(--color-primary-400);
+  border-color: var(--color-primary-800);
 }
 
 html.dark .ba-slider:active .ba-slider__handle-knob {
-  box-shadow: 0 4px 24px rgba(56, 189, 248, 0.5);
+  box-shadow: 0 4px 24px var(--color-primary-900);
 }
 
 /* ============================

@@ -25,13 +25,13 @@ html {
 /* Light theme (default) */
 html.light body {
   color: var(--color-gray-900);
-  background-color: transparent;
+  background-color: var(--color-gray-50);
 }
 
 /* Dark theme */
 html.dark body {
   color: var(--color-gray-100);
-  background-color: transparent;
+  background-color: var(--color-gray-50);
 }
 
 body {
@@ -244,19 +244,22 @@ h6 {
   animation: scaleIn var(--transition-normal) ease-out;
 }
 
-/* ===== GLASSMORPHISM ===== */
+/* ===== CLEAN SURFACES (Replaces Glassmorphism) ===== */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: var(--shadow-lg);
-  isolation: isolate; /* Contains compositing to prevent text aliasing */
+  background: var(--color-white);
+  border: 1px solid var(--color-secondary-100);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-normal);
+  isolation: isolate;
+}
+
+.glass-panel:hover {
+  box-shadow: var(--shadow-md);
 }
 
 html.dark .glass-panel {
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-gray-200);
 }
 
 /* ===== SCROLLBAR ===== */

@@ -28,7 +28,7 @@
   width: 48px;
   height: 48px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(14, 165, 233, 0.05));
+  background: var(--color-primary-100);
   color: var(--color-primary-600);
   transition: transform 0.3s ease;
 }
@@ -38,8 +38,8 @@
 }
 
 html.dark .about-card__icon {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.05));
-  color: #38bdf8;
+  background: var(--color-primary-900);
+  color: var(--color-primary-400);
 }
 
 .about-card__title {
@@ -104,14 +104,14 @@ html.dark .about-values__description {
 }
 
 .value-item:hover {
-  background: rgba(14, 165, 233, 0.04);
+  background: var(--color-primary-50);
   transform: translateX(8px);
-  border-color: rgba(14, 165, 233, 0.1);
+  border-color: var(--color-primary-200);
 }
 
 html.dark .value-item:hover {
-  background: rgba(56, 189, 248, 0.05);
-  border-color: rgba(56, 189, 248, 0.1);
+  background: var(--color-primary-900);
+  border-color: var(--color-primary-800);
 }
 
 .value-item__icon {
@@ -121,13 +121,13 @@ html.dark .value-item:hover {
   width: 40px;
   height: 40px;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05));
+  background: var(--color-secondary-100);
   color: var(--color-secondary-600);
 }
 
 html.dark .value-item__icon {
-  background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(167, 139, 250, 0.05));
-  color: #a78bfa;
+  background: var(--color-secondary-900);
+  color: var(--color-secondary-400);
 }
 
 .value-item__name {

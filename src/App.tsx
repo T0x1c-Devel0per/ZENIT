@@ -3,7 +3,7 @@ import { Suspense, lazy } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Layout } from './components/Layout/index.js';
 import { Loading } from './components/Loading/index.js';
-import { BackgroundParticles } from './components/BackgroundParticles/index.js';
+import { OrganicBackground } from './components/OrganicBackground/index.js';
 
 // Lazy loaded views
 const Hero = lazy(() => import('./views/Hero/index.js').then(m => ({ default: m.Hero })));
@@ -24,7 +24,7 @@ function App() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <BackgroundParticles />
+      <OrganicBackground />
       <AnimatePresence mode="wait">
         <motion.div
           key={location.pathname}

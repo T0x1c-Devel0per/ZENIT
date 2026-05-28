@@ -40,10 +40,7 @@ html.dark .header--scrolled {
 .header__logo-text {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
-  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-500));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-primary-700);
 }
 
 /* Navegación desktop */
@@ -134,15 +131,15 @@ html.dark .header--scrolled {
 
 /* Modo Oscuro para el Botón */
 html.dark .theme-toggle {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
-  color: #38bdf8 !important; /* Azul Eléctrico para la Luna en Dark Mode */
-  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+  background-color: var(--color-gray-100) !important;
+  border-color: var(--color-gray-200) !important;
+  color: var(--color-accent-400) !important;
+  box-shadow: 0 0 15px rgba(245, 166, 35, 0.1);
 }
 
 html.dark .theme-toggle:hover {
-  background-color: #334155 !important;
-  box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+  background-color: var(--color-gray-200) !important;
+  box-shadow: 0 0 20px rgba(245, 166, 35, 0.2);
 }
 
 .menu-toggle {
@@ -206,9 +203,6 @@ html.dark .theme-toggle:hover {
   }
 
   .header--scrolled .header__logo-text {
-    background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-500));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--color-primary-700);
   }
 }
